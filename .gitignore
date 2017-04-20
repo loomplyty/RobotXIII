@@ -1,11 +1,13 @@
  
 #for qt
 CMakeLists.txt.user
+ 
 *.config
 *.files
 *.includes
 *.creator
 *.creator.user
+ 
 # for cmake
 CMakeCache.txt
 CMakeFiles
