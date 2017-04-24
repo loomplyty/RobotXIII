@@ -11,11 +11,11 @@ using namespace std;
 #include <aris.h>
 #include <Robot_Gait.h>
 #include <Robot_Type_I.h>
-/*
+//liujimu's gaits
 #include "move_body.h"
 #include "swing.h"
 #include "twist_waist.h"
-*/
+
 #ifdef WIN32
 #define rt_printf printf
 #endif
@@ -32,11 +32,11 @@ int main(int argc, char *argv[])
 	if (argc <= 1)
 	{
 		std::cout << "you did not type in robot name, in this case ROBOT-XIII will start" << std::endl;
-		xml_address = "/usr/Robots/resource/Robot_Type_I/Robot_XIII/Robot_XIII.xml";
+		xml_address = "/home/hex/Desktop/RobotXIII/Robot_XIII.xml";
 	}
 	else if (std::string(argv[1]) == "XIII")
 	{
-		xml_address = "/usr/Robots/resource/Robot_Type_I/Robot_XIII/Robot_XIII.xml";
+		xml_address = "/home/hex/Desktop/RobotXIII/Robot_XIII.xml";
 	}
 	else
 	{
@@ -55,9 +55,9 @@ int main(int argc, char *argv[])
 	rs.addCmd("wk", Robots::walkParse, Robots::walkGait);
 	rs.addCmd("ro", Robots::resetOriginParse, Robots::resetOriginGait);
 	//liujimu's gaits
-	//rs.addCmd("mb", moveBodyParse, moveBodyGait);
-	//rs.addCmd("sw", swingParse, swingGait);
-	//rs.addCmd("tw", twistWaistParse, twistWaistGait);
+	rs.addCmd("mb", moveBodyParse, moveBodyGait);
+	rs.addCmd("sw", swingParse, swingGait);
+	rs.addCmd("tw", twistWaistParse, twistWaistGait);
 
 	rs.open();
 
