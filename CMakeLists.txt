@@ -80,7 +80,8 @@ set(ROBOTS_INCL_DIR "/usr/Robots/include")
 set(ROBOTS_LINK_DIR "/usr/Robots/lib")
 set(ROBOTS_LINK_LIB Robot_Type_I Robot_Type_II Robot_Base)
 
-set(ALL_INCL_DIR ${ROBOTS_INCL_DIR} ${ARIS_INCL_DIR} ${XNNITE_INCL_DIR} ${XSENS_INCL_DIR} ${ETHERLAB_INCL_DIR} ${XENOMAI_INCL_DIR} ${GENERAL_INCL_DIR})
+
+set(ALL_INCL_DIR ${ROBOTS_INCL_DIR} ${ARIS_INCL_DIR} ${XNNITE_INCL_DIR} ${XSENS_INCL_DIR} ${ETHERLAB_INCL_DIR} ${XENOMAI_INCL_DIR} ${GENERAL_INCL_DIR} )
 set(ALL_LINK_DIR ${ROBOTS_LINK_DIR} ${ARIS_LINK_DIR} ${XNNITE_LINK_DIR} ${XSENS_LINK_DIR} ${ETHERLAB_LINK_DIR} ${XENOMAI_LINK_DIR})
 set(ALL_LINK_LIB ${ROBOTS_LINK_LIB} ${ARIS_LINK_LIB} ${XNNITE_LINK_LIB} ${XSENS_LINK_LIB} ${ETHERLAB_LINK_LIB} ${XENOMAI_LINK_LIB} ${SYSTEM_LINK_LIB})
 endif(UNIX)
@@ -104,11 +105,14 @@ endif(WIN32)
 
 include_directories(${ALL_INCL_DIR})
 link_directories(${ALL_LINK_DIR})
-
+##include_directories("../HexPlanner")
 ################################### build server ####################################
-set(SOURCE_FILES main.cpp move_body.cpp swing.cpp twist_waist.cpp)
+set(PLANNER_SOURCE_FILES Planner.cpp Dynamics.cpp DynamicsModelBase.cpp DynamicsBase.cpp)
+set(SOURCE_FILES main.cpp move_body.cpp swing.cpp twist_waist.cpp ForceTest.cpp ForceGait.cpp)
 PREPEND(FULL_SRC Server ${SOURCE_FILES})
-add_executable(Server ${FULL_SRC})
+PREPEND(FULL_SRC2 HexPlanner ${PLANNER_SOURCE_FILES})
+
+add_executable(Server ${FULL_SRC} ${FULL_SRC2})
 target_link_libraries(Server ${ALL_LINK_LIB})
 
 ################################### build client ####################################

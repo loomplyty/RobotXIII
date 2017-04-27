@@ -15,7 +15,9 @@ using namespace std;
 #include "move_body.h"
 #include "swing.h"
 #include "twist_waist.h"
-
+//TY'S gaits
+#include "ForceGait.h"
+#include "ForceTest.h"
 #ifdef WIN32
 #define rt_printf printf
 #endif
@@ -51,6 +53,7 @@ int main(int argc, char *argv[])
 	rs.addCmd("en", Robots::basicParse, nullptr);
 	rs.addCmd("ds", Robots::basicParse, nullptr);
 	rs.addCmd("hm", Robots::basicParse, nullptr);
+    rs.addCmd("zrc", Robots::basicParse, nullptr);
 	rs.addCmd("rc", Robots::recoverParse, Robots::recoverGait);
 	rs.addCmd("wk", Robots::walkParse, Robots::walkGait);
 	rs.addCmd("ro", Robots::resetOriginParse, Robots::resetOriginGait);
@@ -59,7 +62,10 @@ int main(int argc, char *argv[])
 	rs.addCmd("sw", swingParse, swingGait);
 	rs.addCmd("tw", twistWaistParse, twistWaistGait);
 
-	rs.open();
+    //ty
+    rs.addCmd("ft",ForceTestParse,ForceTestGait);
+    rs.addCmd("fg",stepOverParse,stepOverGait);
+    rs.open();
 
 	rs.setOnExit([&]() 
 	{
