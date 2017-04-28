@@ -20,7 +20,7 @@
             <S2jpe type="matrix">{ 0, 0,      0,     0, -PI / 2, 0 }</S2jpe>
             <S3ipe type="matrix">{ 0, 0.059, -0.034, 0, -PI / 2, 0 }</S3ipe>
             <S3jpe type="matrix">{ 0, 0,      0,     0, -PI / 2, 0 }</S3jpe>
-            <Sfipe type="matrix">{ 0.065, 0, 0, 0, 0, 0 }</Sfipe>
+            <Sfipe type="matrix">{ 0.10, 0, 0, 0, 0, 0 }</Sfipe>
             <Sfjpe type="matrix">{ 0,   0, 0, 0, 0, 0 }</Sfjpe>
             <LFpe type="matrix">{-0.43322 , 0 , -0.19907,   PI/2,  PI* 2/3,   -PI/2-PI*70/180}</LFpe>
             <LMpe type="matrix">{-0.48305 , 0 ,  0,         PI/2,  PI* 3/3,   -PI/2-PI*70/180}</LMpe>
@@ -711,24 +711,24 @@
               </RuiCongCombo>
             </SlaveType>
             <Slave>
-                <Motion1 type="ElmoSoloWhistle"  min_pos="0.690" max_pos="1.100" max_vel="0.1706" home_pos="0.690" input2count="5120000" abs_id="16"/>
-                <Motion2 type="ElmoSoloWhistle"  min_pos="0.669" max_pos="1.080" max_vel="0.1706" home_pos="0.669" input2count="51200000" abs_id="15"/>
-                <Motion3 type="ElmoSoloWhistle"  min_pos="0.690" max_pos="1.100" max_vel="0.1706" home_pos="0.690" input2count="51200000" abs_id="17"/>
-                <Motion4 type="ElmoSoloWhistle"  min_pos="0.690" max_pos="1.100" max_vel="0.1706" home_pos="0.690" input2count="51200000" abs_id="13"/>
-                <Motion5 type="ElmoSoloWhistle"  min_pos="0.669" max_pos="1.080" max_vel="0.1706" home_pos="0.669" input2count="51200000" abs_id="12"/>
-                <Motion6 type="ElmoSoloWhistle"  min_pos="0.690" max_pos="1.100" max_vel="0.1706" home_pos="0.690" input2count="51200000" abs_id="14"/>
-                <Motion7 type="ElmoSoloWhistle"  min_pos="0.690" max_pos="1.100" max_vel="0.1706" home_pos="0.690" input2count="51200000" abs_id="10"/>
-                <Motion8 type="ElmoSoloWhistle"  min_pos="0.669" max_pos="1.080" max_vel="0.1706" home_pos="0.669" input2count="51200000" abs_id="9"/>
-                <Motion9 type="ElmoSoloWhistle"  min_pos="0.690" max_pos="1.100" max_vel="0.1706" home_pos="0.690" input2count="51200000" abs_id="11"/>
-                <Motion10 type="ElmoSoloWhistle" min_pos="0.690" max_pos="1.100" max_vel="0.1706" home_pos="0.690" input2count="51200000" abs_id="1"/>
-                <Motion11 type="ElmoSoloWhistle" min_pos="0.669" max_pos="1.080" max_vel="0.1706" home_pos="0.669" input2count="51200000" abs_id="0"/>
-                <Motion12 type="ElmoSoloWhistle" min_pos="0.690" max_pos="1.100" max_vel="0.1706" home_pos="0.690" input2count="51200000" abs_id="2"/>
-                <Motion13 type="ElmoSoloWhistle" min_pos="0.690" max_pos="1.100" max_vel="0.1706" home_pos="0.690" input2count="51200000" abs_id="4"/>
-                <Motion14 type="ElmoSoloWhistle" min_pos="0.669" max_pos="1.080" max_vel="0.1706" home_pos="0.669" input2count="51200000" abs_id="3"/>
-                <Motion15 type="ElmoSoloWhistle" min_pos="0.690" max_pos="1.100" max_vel="0.1706" home_pos="0.690" input2count="51200000" abs_id="5"/>
-                <Motion16 type="ElmoSoloWhistle" min_pos="0.690" max_pos="1 .100" max_vel="0.1706" home_pos="0.690" input2count="51200000" abs_id="7"/>
-                <Motion17 type="ElmoSoloWhistle" min_pos="0.669" max_pos="1.080" max_vel="0.1706" home_pos="0.669" input2count="51200000" abs_id="6"/>
-                <Motion18 type="ElmoSoloWhistle" min_pos="0.690" max_pos="1.100" max_vel="0.1706" home_pos="0.690" input2count="51200000" abs_id="8"/>
+                <Motion1 type="ElmoSoloWhistle"  min_pos="0.690" max_pos="1.100" max_vel="0.1706" home_pos="0.690" input2count="51200000" abs_id="8"/>
+                <Motion2 type="ElmoSoloWhistle"  min_pos="0.669" max_pos="1.080" max_vel="0.1706" home_pos="0.669" input2count="51200000" abs_id="6"/>
+                <Motion3 type="ElmoSoloWhistle"  min_pos="0.690" max_pos="1.100" max_vel="0.1706" home_pos="0.690" input2count="51200000" abs_id="7"/>
+                <Motion4 type="ElmoSoloWhistle"  min_pos="0.690" max_pos="1.100" max_vel="0.1706" home_pos="0.690" input2count="51200000" abs_id="5"/>
+                <Motion5 type="ElmoSoloWhistle"  min_pos="0.669" max_pos="1.080" max_vel="0.1706" home_pos="0.669" input2count="51200000" abs_id="3"/>
+                <Motion6 type="ElmoSoloWhistle"  min_pos="0.690" max_pos="1.100" max_vel="0.1706" home_pos="0.690" input2count="51200000" abs_id="4"/>
+                <Motion7 type="ElmoSoloWhistle"  min_pos="0.690" max_pos="1.100" max_vel="0.1706" home_pos="0.690" input2count="51200000" abs_id="0"/>
+                <Motion8 type="ElmoSoloWhistle"  min_pos="0.669" max_pos="1.080" max_vel="0.1706" home_pos="0.669" input2count="51200000" abs_id="2"/>
+                <Motion9 type="ElmoSoloWhistle"  min_pos="0.690" max_pos="1.100" max_vel="0.1706" home_pos="0.690" input2count="51200000" abs_id="1"/>
+                <Motion10 type="ElmoSoloWhistle" min_pos="0.690" max_pos="1.100" max_vel="0.1706" home_pos="0.690" input2count="51200000" abs_id="11"/>
+                <Motion11 type="ElmoSoloWhistle" min_pos="0.669" max_pos="1.080" max_vel="0.1706" home_pos="0.669" input2count="51200000" abs_id="9"/>
+                <Motion12 type="ElmoSoloWhistle" min_pos="0.690" max_pos="1.100" max_vel="0.1706" home_pos="0.690" input2count="51200000" abs_id="10"/>
+                <Motion13 type="ElmoSoloWhistle" min_pos="0.690" max_pos="1.100" max_vel="0.1706" home_pos="0.690" input2count="51200000" abs_id="14"/>
+                <Motion14 type="ElmoSoloWhistle" min_pos="0.669" max_pos="1.080" max_vel="0.1706" home_pos="0.669" input2count="51200000" abs_id="12"/>
+                <Motion15 type="ElmoSoloWhistle" min_pos="0.690" max_pos="1.100" max_vel="0.1706" home_pos="0.690" input2count="51200000" abs_id="13"/>
+                <Motion16 type="ElmoSoloWhistle" min_pos="0.690" max_pos="1.100" max_vel="0.1706" home_pos="0.690" input2count="51200000" abs_id="17"/>
+                <Motion17 type="ElmoSoloWhistle" min_pos="0.669" max_pos="1.080" max_vel="0.1706" home_pos="0.669" input2count="51200000" abs_id="15"/>
+                <Motion18 type="ElmoSoloWhistle" min_pos="0.690" max_pos="1.100" max_vel="0.1706" home_pos="0.690" input2count="51200000" abs_id="16"/>
             	<ForceSensor type="RuiCongCombo"/>
 	    </Slave>
         </EtherCat>

@@ -107,7 +107,7 @@ auto stepOverGait(aris::dynamic::Model &model, const aris::dynamic::PlanParamBas
         beginMak.setPrtPm(*robot.body().pm());
         beginMak.update();
         robot.GetPee(beginPee, beginMak);
-std:cout<<"beginPee got from model"<<std::endl;
+        std:cout<<"beginPee got from model"<<std::endl;
         for (int i=0;i<6;i++)
             std::cout<<beginPee[i*3]<<" "<<beginPee[i*3+1]<<" "<<beginPee[i*3+2]<<std::endl;
         mg.init();
@@ -132,11 +132,12 @@ std:cout<<"beginPee got from model"<<std::endl;
     ///****  init step, update params, set planner and modifier***//
     if(mg.motionUpdater.getCount()==0)
     {
-        std::cout<<"//////////////begin stepCount:  "<<mg.motionUpdater.getStepCount()<<std::endl;
+        std::cout<<"Step Begins:  "<<mg.motionUpdater.getStepCount()<<std::endl;
         static StepParamsP2P paramP2P;
         memcpy(&paramP2P,&param.stepParam[mg.motionUpdater.getStepCount()],sizeof(paramP2P));
+        std::cout<<"Swing legs :  "<<paramP2P.swingID[0]<<" "<<paramP2P.swingID[1]<<" "<<paramP2P.swingID[2]<<std::endl;
 
-
+        //if(mg.motionUpdater.getStepCount()==0)//get realtime legPee feedback
         if(mg.motionUpdater.getStepCount()>0)
         {
             paramP2P.initBodyPee=mg.motionUpdater.lastConfig.BodyPee;
@@ -150,7 +151,6 @@ std:cout<<"beginPee got from model"<<std::endl;
         std::cout<<"initPee"<<paramP2P.initLegPee<<std::endl;
         std::cout<<"targetPee"<<paramP2P.initLegPee<<std::endl;
 
-
       }
     ///*** plan***///
     if(mg.procceed()==-1)
@@ -160,6 +160,10 @@ std:cout<<"beginPee got from model"<<std::endl;
     }
     else
         mg.countPlus();
+
+
+    //std::cout<<"legState"<<mg.motionUpdater.legState[0]<<mg.motionUpdater.legState[1]<<mg.motionUpdater.legState[2];
+    //std::cout<<mg.motionUpdater.legState[3]<<mg.motionUpdater.legState[4]<<mg.motionUpdater.legState[5]<<std::endl;
 
     ///** set planned traj to model***//
     double Peb[6];

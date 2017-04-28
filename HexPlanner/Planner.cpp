@@ -104,7 +104,7 @@ void StepPlannerP2P(const StepParams* params_in, MotionStatusUpdater& updater)
     else /// prolong leg trajectory, body stops
     {
         double tExtend = double(updater.getCount() - params.totalCount) / COUNT_PER_SEC;
-        Vector3d vExtend(0,-0.02,0);
+        Vector3d vExtend(0,-0.015,0);
         for (int i : params.swingID)
             updater.plannedConfig.LegPee.col(i) = params.targetLegPee.col(i) + tExtend*vExtend;
 
@@ -136,7 +136,7 @@ void StepPlannerCubic(const StepParams* params_in, MotionStatusUpdater& updater)
     else /// prolong leg trajectory, body stops
     {
         double tExtend = double(updater.getCount() - params.totalCount) / COUNT_PER_SEC;
-        Vector3d vExtend(0,-0.02,0);
+        Vector3d vExtend(0,-0.03,0);
         for (int i : params.swingID)
             updater.plannedConfig.LegPee.col(i) = params.targetLegPee.col(i) + tExtend*vExtend;
 
@@ -158,8 +158,7 @@ void StepTDStop(const StepParams* params_in, MotionStatusUpdater& updater)
             updater.legState[i] = Swing;
         updater.robotState = ThreeStance;
     }
-
-    if (updater.isForceSensorApplied == true)
+    else if(updater.isForceSensorApplied == true)
     {
         for (int i : params.stanceID)
         {
@@ -171,15 +170,17 @@ void StepTDStop(const StepParams* params_in, MotionStatusUpdater& updater)
         {
             switch (updater.legState[i])
             {
+            std::cout<<"Swing legs :  "<<params.swingID[0]<<" "<<params.swingID[1]<<" "<<params.swingID[2]<<std::endl;
+            std::cout<<"foot force "<<i<<": "<<updater.sensorData.forceData(2, i)<<std::endl;
             case Swing:
-                if (updater.sensorData.forceData(2, i) < -updater.TDThreshold)//Fz
+                if (abs(updater.sensorData.forceData(2, i))> updater.TDThreshold)//Fz
                 {
                     updater.legState[i] = Trans;
                     updater.TDLegPos.col(i) = updater.lastConfig.LegPee.col(i);
                 }
                 break;
             case Trans:
-                if (updater.sensorData.forceData(2, i) < -updater.SupportThreshold)//Fz
+                if (abs(updater.sensorData.forceData(2, i)) >updater.SupportThreshold)//Fz
                 {
                     updater.legState[i] = Stance;
                     updater.supportLegPos.col(i) = updater.lastConfig.LegPee.col(i);
