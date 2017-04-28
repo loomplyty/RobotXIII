@@ -75,8 +75,8 @@ struct StepParamsNavigation :StepParams
 class MotionStatusUpdater// update every count
 {
 public:
-	double SupportThreshold{ 300 };
-	double TDThreshold{ 100 };
+    double SupportThreshold{ 50 };//kg
+    double TDThreshold{ 20 };
 	Matrix<double, 3, 6> supportLegPos;
 	Matrix<double, 3, 6> TDLegPos;
 	RobotConfiguration plannedConfig;

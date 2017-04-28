@@ -36,9 +36,9 @@ auto stepOverParse(const std::string &cmd, const std::map<std::string, std::stri
             -0.85, -0.85, -0.85, -0.85, -0.85, -0.85,
             -0.6, 0, 0.6, -0.6, 0, 0.6;
     bodyPeeSeq[0]=Vector3d(0,0,0);
-    bodyPeeSeq[1]=Vector3d(0,0.05,0);
-    bodyPeeSeq[2]=Vector3d(0,-0.05,0);
-    bodyPeeSeq[3]=Vector3d(0,0.05,0);
+    bodyPeeSeq[1]=Vector3d(0,0.0,0);
+    bodyPeeSeq[2]=Vector3d(0,0.0,0);
+    bodyPeeSeq[3]=Vector3d(0,0.0,0);
 
 
 
@@ -50,7 +50,7 @@ auto stepOverParse(const std::string &cmd, const std::map<std::string, std::stri
         param.stepParam[N].initBodyR=Matrix3d::Identity();
         param.stepParam[N].targetBodyR=Matrix3d::Identity();
         param.stepParam[N].totalCount = COUNT_PER_STEP;
-        param.stepParam[N].stepHeight = 0.1;
+        param.stepParam[N].stepHeight = 0.04;
         param.stepParam[N].initBodyPee = bodyPeeSeq[N];
         param.stepParam[N].targetBodyPee = bodyPeeSeq[N+1];
         std::cout<<param.stepParam[N].initBodyPee<<std::endl;
@@ -106,10 +106,10 @@ auto stepOverGait(aris::dynamic::Model &model, const aris::dynamic::PlanParamBas
     {
         beginMak.setPrtPm(*robot.body().pm());
         beginMak.update();
-        //     robot.GetPee(beginPee, beginMak);
-        //    std:cout<<"beginPee got from model"<<std::endl;
-        //      for (int i=0;i<6;i++)
-        //          std::cout<<beginPee[i*3]<<" "<<beginPee[i*3+1]<<" "<<beginPee[i*3+2]<<std::endl;
+        robot.GetPee(beginPee, beginMak);
+std:cout<<"beginPee got from model"<<std::endl;
+        for (int i=0;i<6;i++)
+            std::cout<<beginPee[i*3]<<" "<<beginPee[i*3+1]<<" "<<beginPee[i*3+2]<<std::endl;
         mg.init();
     }
 
@@ -118,29 +118,41 @@ auto stepOverGait(aris::dynamic::Model &model, const aris::dynamic::PlanParamBas
     ////**update sensor data**//
 
 
-
-    for (int i=0;i<1;i++)
+    for (int i=0;i<6;i++)
     {
         data.forceData.col(i)=Vector3d(param.ruicong_data->at(0).force[i].Fx,param.ruicong_data->at(0).force[i].Fy,param.ruicong_data->at(0).force[i].Fz);
     }
     double euler[3];
     param.imu_data->toEulBody2Ground(euler,"213");
     data.imuData=Vector3d(euler);
+    mg.updateSensorData(data);
 
     mg.motionUpdater.isForceSensorApplied=true;
 
+    ///****  init step, update params, set planner and modifier***//
     if(mg.motionUpdater.getCount()==0)
     {
         std::cout<<"//////////////begin stepCount:  "<<mg.motionUpdater.getStepCount()<<std::endl;
         static StepParamsP2P paramP2P;
         memcpy(&paramP2P,&param.stepParam[mg.motionUpdater.getStepCount()],sizeof(paramP2P));
 
+
+        if(mg.motionUpdater.getStepCount()>0)
+        {
+            paramP2P.initBodyPee=mg.motionUpdater.lastConfig.BodyPee;
+            paramP2P.initLegPee=mg.motionUpdater.lastConfig.LegPee;
+            paramP2P.initBodyR=mg.motionUpdater.lastConfig.BodyR;
+        }
+
         mg.setStepParams(&paramP2P);
         mg.setStepPlanner(StepPlannerP2P);
-        mg.setStepModifier(StepTDTime);
-    }
-    mg.updateSensorData(data);
+        mg.setStepModifier(StepTDStop);
+        std::cout<<"initPee"<<paramP2P.initLegPee<<std::endl;
+        std::cout<<"targetPee"<<paramP2P.initLegPee<<std::endl;
 
+
+      }
+    ///*** plan***///
     if(mg.procceed()==-1)
     {
         std::cout<<"step finished at this count:"<<mg.motionUpdater.getCount()<<std::endl;
@@ -149,11 +161,16 @@ auto stepOverGait(aris::dynamic::Model &model, const aris::dynamic::PlanParamBas
     else
         mg.countPlus();
 
+    ///** set planned traj to model***//
     double Peb[6];
     double Pee[18];
 
     for (int i=0;i<3;i++)
         Peb[i]=mg.motionUpdater.currentConfig.BodyPee(i);
+
+    Peb[3]=0;
+    Peb[4]=0;
+    Peb[5]=0;
 
     for(int i=0;i<6;i++)
     {
@@ -164,6 +181,7 @@ auto stepOverGait(aris::dynamic::Model &model, const aris::dynamic::PlanParamBas
 
     robot.SetPeb(Peb, beginMak);
     robot.SetPee(Pee, beginMak);
+
     if(mg.motionUpdater.getStepCount() == param.stepN)
     {
         std::cout<<"zero returned!!!!!!!!!!!!!!!"<<std::endl;

@@ -54,6 +54,8 @@ int MotionGenerator::procceed()
 
     planner(pParams, motionUpdater);
     modifier(pParams, motionUpdater);
+    motionUpdater.lastConfig=motionUpdater.currentConfig;
+
     if (motionUpdater.isStepFinished == false)
         return motionUpdater.getCount();
 
@@ -84,35 +86,25 @@ void MotionGenerator::forceStop()
 void StepPlannerP2P(const StepParams* params_in, MotionStatusUpdater& updater)
 {
     auto &params = static_cast<const StepParamsP2P &>(*params_in);
-    //    if(updater.getCount()%100==0)
-    //        std::cout<<params.targetLegPee<<std::endl;
 
-    if (updater.getCount() < params.totalCount)
+    if (updater.getCount() <= params.totalCount-1)
     {
-        //std::cout << "plan procceed, count in planner: " << planner.getCount() << std::endl;
 
         Vector3d swingP;
         for (int i : params.swingID)
         {
             PlanTrajEllipsoid(params.initLegPee.col(i), params.targetLegPee.col(i), params.stepHeight, updater.getCount(), params.totalCount, swingP);
             updater.plannedConfig.LegPee.col(i) = swingP;
-            //std::cout << "plan for leg:" << i << "pee is: "<<swingP<<std::endl;
-        }
+         }
         for (int i : params.stanceID)
             updater.plannedConfig.LegPee.col(i) = params.initLegPee.col(i);
         PlanTrajEllipsoid(params.initBodyPee, params.targetBodyPee, 0, updater.getCount(), params.totalCount, updater.plannedConfig.BodyPee);
-        //std::cout << "init body: pee is: " << params.initBodyPee << std::endl;
-        //std::cout << "target body: pee is: " << params.targetBodyPee << std::endl;
-
-        //std::cout << "plan for body: pee is: "<< updater.plannedConfig.BodyPee <<std::endl;
-
         PlanRbyQuatInterp(params.initBodyR, params.targetBodyR, updater.getCount(), params.totalCount, updater.plannedConfig.BodyR);
-        //planner.countPlus();
     }
     else /// prolong leg trajectory, body stops
     {
         double tExtend = double(updater.getCount() - params.totalCount) / COUNT_PER_SEC;
-        Vector3d vExtend(0,-0.03,0);
+        Vector3d vExtend(0,-0.02,0);
         for (int i : params.swingID)
             updater.plannedConfig.LegPee.col(i) = params.targetLegPee.col(i) + tExtend*vExtend;
 
@@ -125,9 +117,8 @@ void StepPlannerCubic(const StepParams* params_in, MotionStatusUpdater& updater)
 {
     auto &params = static_cast<const StepParamsCubic &>(*params_in);
 
-    if (updater.getCount() < params.totalCount)
+    if (updater.getCount() <= params.totalCount-1)
     {
-        //std::cout << "plan procceed, count in planner: " << planner.getCount() << std::endl;
 
         Vector3d swingP;
         for (int i : params.swingID)
@@ -139,18 +130,13 @@ void StepPlannerCubic(const StepParams* params_in, MotionStatusUpdater& updater)
         for (int i : params.stanceID)
             updater.plannedConfig.LegPee.col(i) = params.initLegPee.col(i);
         PlanTrajCubic(params.initBodyPee, params.targetBodyPee, params.initBodyVee,params.targetBodyVee, updater.getCount(), params.totalCount, updater.plannedConfig.BodyPee);
-        //std::cout << "init body: pee is: " << params.initBodyPee << std::endl;
-        //std::cout << "target body: pee is: " << params.targetBodyPee << std::endl;
-
-        //std::cout << "plan for body: pee is: "<< updater.plannedConfig.BodyPee <<std::endl;
 
         PlanRbyQuatInterp(params.initBodyR, params.targetBodyR, updater.getCount(), params.totalCount, updater.plannedConfig.BodyR);
-        //planner.countPlus();
-    }
+     }
     else /// prolong leg trajectory, body stops
     {
         double tExtend = double(updater.getCount() - params.totalCount) / COUNT_PER_SEC;
-        Vector3d vExtend(0,-0.03,0);
+        Vector3d vExtend(0,-0.02,0);
         for (int i : params.swingID)
             updater.plannedConfig.LegPee.col(i) = params.targetLegPee.col(i) + tExtend*vExtend;
 
@@ -186,17 +172,17 @@ void StepTDStop(const StepParams* params_in, MotionStatusUpdater& updater)
             switch (updater.legState[i])
             {
             case Swing:
-                if (updater.sensorData.forceData(2, i) > updater.TDThreshold)//Fz
+                if (updater.sensorData.forceData(2, i) < -updater.TDThreshold)//Fz
                 {
                     updater.legState[i] = Trans;
-                    updater.TDLegPos.col(i) = updater.currentConfig.LegPee.col(i);
+                    updater.TDLegPos.col(i) = updater.lastConfig.LegPee.col(i);
                 }
                 break;
             case Trans:
-                if (updater.sensorData.forceData(2, i) > updater.SupportThreshold)//Fz
+                if (updater.sensorData.forceData(2, i) < -updater.SupportThreshold)//Fz
                 {
                     updater.legState[i] = Stance;
-                    updater.supportLegPos.col(i) = updater.currentConfig.LegPee.col(i);
+                    updater.supportLegPos.col(i) = updater.lastConfig.LegPee.col(i);
                 }
                 break;
             case Stance:
@@ -204,6 +190,7 @@ void StepTDStop(const StepParams* params_in, MotionStatusUpdater& updater)
                 break;
             }
         }
+
 
         // robot state judging
         if (updater.legState[params.swingID[0]] == Stance && updater.legState[params.swingID[1]] == Stance && updater.legState[params.swingID[2]] == Stance)
@@ -223,7 +210,8 @@ void StepTDStop(const StepParams* params_in, MotionStatusUpdater& updater)
             updater.currentConfig.LegPee.col(i) = updater.plannedConfig.LegPee.col(i);
             break;
         case Trans:
-            updater.currentConfig.LegPee.col(i) = updater.TDLegPos.col(i);
+            static Vector3d v(0,-0.01,0);
+            updater.currentConfig.LegPee.col(i) = updater.lastConfig.LegPee.col(i)+v*1.0/COUNT_PER_SEC;
             break;
         case Stance:
             updater.currentConfig.LegPee.col(i) = updater.supportLegPos.col(i);
@@ -232,13 +220,15 @@ void StepTDStop(const StepParams* params_in, MotionStatusUpdater& updater)
             break;
         }
     }
+    for(int i:params.stanceID)
+        updater.currentConfig.LegPee.col(i)= updater.plannedConfig.LegPee.col(i);
     updater.currentConfig.BodyPee = updater.plannedConfig.BodyPee;
     updater.currentConfig.BodyR = updater.plannedConfig.BodyR;
 
     //judge finish
-    if (updater.getCount() >= params.totalCount && updater.robotState == SixStance)
+    if (updater.getCount() >= params.totalCount-1 && updater.robotState == SixStance)
         updater.isStepFinished = true;
-    else if (updater.getCount() >= params.totalCount + 5000)
+    else if (updater.getCount() >= params.totalCount + 3000-1)
         updater.isStepFinished = true;
     else
         updater.isStepFinished = false;
@@ -273,11 +263,11 @@ void StepTDTime(const StepParams* params_in, MotionStatusUpdater& updater)
     //judge finish
     if (updater.getCount() >= params.totalCount-1)
     {
-        std::cout<<"/////////"<<std::endl;
+//        std::cout<<"/////////"<<std::endl;
 
-        std::cout<<"updater.getCount() >= params.totalCount"<<std::endl;
-        std::cout<<"step finished , count is: "<<updater.getCount()<<std::endl;
-        std::cout<<"/////////"<<std::endl;
+//        std::cout<<"updater.getCount() >= params.totalCount"<<std::endl;
+//        std::cout<<"step finished , count is: "<<updater.getCount()<<std::endl;
+//        std::cout<<"/////////"<<std::endl;
         updater.isStepFinished = true;
 
     }
