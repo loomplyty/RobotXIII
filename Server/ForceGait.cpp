@@ -11,6 +11,8 @@
 #endif
 using namespace Dynamics;
 
+static bool isPushWalkFinished{false};
+
 auto stepOverParse(const std::string &cmd, const std::map<std::string, std::string> &params, aris::core::Msg &msg)->void
 {
     multiStepParam param;
@@ -195,4 +197,54 @@ auto stepOverGait(aris::dynamic::Model &model, const aris::dynamic::PlanParamBas
         return 1;
 }
 
+
+auto pushWalkParse(const std::string &cmd, const std::map<std::string, std::string> &params, aris::core::Msg &msg)->void
+{
+    aris::server::GaitParamBase param;
+    for (auto &i : params)
+    {
+        if (i.first == "stop")
+        {
+            isPushWalkFinished=true;
+        }
+    }
+    msg.copyStruct(param);
+}
+auto pushWalkGait(aris::dynamic::Model &model, const aris::dynamic::PlanParamBase &param_in)->int
+{
+    auto &robot = static_cast<Robots::RobotBase &>(model);
+    auto &param = static_cast<const aris::server::GaitParamBase &>(param_in);
+
+    static aris::dynamic::FloatMarker beginMak{robot.ground()};
+    static double beginPee[18];
+
+    if (param.count == 0)
+    {
+        beginMak.setPrtPm(*robot.body().pm());
+        beginMak.update();
+        robot.GetPee(beginPee, beginMak);
+        std:cout<<"beginPee got from model"<<std::endl;
+        for (int i=0;i<6;i++)
+            std::cout<<beginPee[i*3]<<" "<<beginPee[i*3+1]<<" "<<beginPee[i*3+2]<<std::endl;
+    }
+
+    static Vector3d totalF(0,0,0);
+    static Vector3d totalM(0,0,0);
+    for(int i=0;i<6;i++)
+    {
+        totalF+=Vector3d(param.ruicong_data->at(0).force[i].Fx,param.ruicong_data->at(0).force[i].Fy,param.ruicong_data->at(0).force[i].Fz);
+        totalM+=Vector3d(beginPee[i*3],beginPee[i*3+1],beginPee[i*3+2]).cross(Vector3d(param.ruicong_data->at(0).force[i].Fx,param.ruicong_data->at(0).force[i].Fy,param.ruicong_data->at(0).force[i].Fz));
+    }
+    if(param.count%200==0)
+    {
+        rt_printf("totalF: %f %f %f\n ",totalF(0),totalF(1),totalF(2));
+        rt_printf("totalM: %f %f %f\n ",totalM(0),totalM(1),totalM(2));
+    }
+
+    if(isPushWalkFinished=false)
+        return 1;
+    else
+        return 0;
+
+}
 
