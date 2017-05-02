@@ -168,68 +168,68 @@ int sgn(const double& d)
 
 //    }
 
-void plan_legStep(const Vector3d& p0, const Vector3d& p1, const double stepH, const int count, const int totalCount, Vector3d &legPos)
-{
-    double s;
-    s = PI*(1 - cos(double(count) / totalCount*PI)) / 2;//[0,PI]
-    Vector3d axisShort(0, stepH, 0);
-    legPos = 0.5*(p0 + p1) + 0.5*(p0 - p1)*cos(s) + axisShort*sin(s);
-}
+//void plan_legStep(const Vector3d& p0, const Vector3d& p1, const double stepH, const int count, const int totalCount, Vector3d &legPos)
+//{
+//    double s;
+//    s = PI*(1 - cos(double(count) / totalCount*PI)) / 2;//[0,PI]
+//    Vector3d axisShort(0, stepH, 0);
+//    legPos = 0.5*(p0 + p1) + 0.5*(p0 - p1)*cos(s) + axisShort*sin(s);
+//}
 
-void plan_legStep(const Vector3d& p0, const Vector3d& p1, const double stepH, const int count, const int totalCount, Vector3d & legPos, Vector3d & legVel)
-{
-    double s,sd;
-    s = PI*(1 - cos(double(count) / totalCount*PI)) / 2;//[0,PI], 0.5*pi*(1-cos(t/T*pi))
-    sd = 0.5*PI*sin(double(count) / totalCount*PI)*(PI / (double(totalCount)/1000));
-    Vector3d axisShort(0, stepH, 0);
-    legPos = 0.5*(p0 + p1) + 0.5*(p0 - p1)*cos(s) + axisShort*sin(s);
-    legVel = -0.5*(p0 - p1)*sin(s)*sd+axisShort*cos(s)*sd;
-    //	std::cout << legVel << std::endl;
-}
+//void plan_legStep(const Vector3d& p0, const Vector3d& p1, const double stepH, const int count, const int totalCount, Vector3d & legPos, Vector3d & legVel)
+//{
+//    double s,sd;
+//    s = PI*(1 - cos(double(count) / totalCount*PI)) / 2;//[0,PI], 0.5*pi*(1-cos(t/T*pi))
+//    sd = 0.5*PI*sin(double(count) / totalCount*PI)*(PI / (double(totalCount)/1000));
+//    Vector3d axisShort(0, stepH, 0);
+//    legPos = 0.5*(p0 + p1) + 0.5*(p0 - p1)*cos(s) + axisShort*sin(s);
+//    legVel = -0.5*(p0 - p1)*sin(s)*sd+axisShort*cos(s)*sd;
+//    //	std::cout << legVel << std::endl;
+//}
 
-void plan_legStep(const Vector3d& p0, const Vector3d& p1, const double stepH, const int count, const int totalCount, Vector3d & legPos, Vector3d & legVel, Vector3d & legAcc)
-{
-    double s, sd,sdd;
-    s = PI*(1 - cos(double(count) / totalCount*PI)) / 2;//[0,PI], 0.5*pi*(1-cos(t/T*pi))
-    sd = 0.5*PI*sin(double(count) / totalCount*PI)*(PI / (double(totalCount) / 1000));
-    sdd= 0.5*PI*cos(double(count) / totalCount*PI)*(PI / (double(totalCount) / 1000))*(PI / (double(totalCount) / 1000));
+//void plan_legStep(const Vector3d& p0, const Vector3d& p1, const double stepH, const int count, const int totalCount, Vector3d & legPos, Vector3d & legVel, Vector3d & legAcc)
+//{
+//    double s, sd,sdd;
+//    s = PI*(1 - cos(double(count) / totalCount*PI)) / 2;//[0,PI], 0.5*pi*(1-cos(t/T*pi))
+//    sd = 0.5*PI*sin(double(count) / totalCount*PI)*(PI / (double(totalCount) / 1000));
+//    sdd= 0.5*PI*cos(double(count) / totalCount*PI)*(PI / (double(totalCount) / 1000))*(PI / (double(totalCount) / 1000));
 
 
-    Vector3d axisShort(0, stepH, 0);
+//    Vector3d axisShort(0, stepH, 0);
 
-    legPos = 0.5*(p0 + p1) + 0.5*(p0 - p1)*cos(s) + axisShort*sin(s);
-    legVel = -0.5*(p0 - p1)*sin(s)*sd+axisShort*cos(s)*sd;
-    legAcc = -0.5*(p0 - p1)*cos(s)*sd*sd-0.5*(p0 - p1)*sin(s)*sdd -axisShort*sin(s)*sd*sd+ axisShort*cos(s)*sdd;
-    //std::cout << legVel << std::endl;
-}
+//    legPos = 0.5*(p0 + p1) + 0.5*(p0 - p1)*cos(s) + axisShort*sin(s);
+//    legVel = -0.5*(p0 - p1)*sin(s)*sd+axisShort*cos(s)*sd;
+//    legAcc = -0.5*(p0 - p1)*cos(s)*sd*sd-0.5*(p0 - p1)*sin(s)*sdd -axisShort*sin(s)*sd*sd+ axisShort*cos(s)*sdd;
+//    //std::cout << legVel << std::endl;
+//}
 
-void plan_bodyStep(const Vector3d& p0, const Vector3d& p1, const int count, const int totalCount, Vector3d& bodyPos)
-{
-    double s;
-    s = PI*(1 - cos(double(count) / totalCount*PI)) / 2;//[0,PI]
-    bodyPos = 0.5*(p0 + p1) + 0.5*(p0 - p1)*cos(s);
-}
+//void plan_bodyStep(const Vector3d& p0, const Vector3d& p1, const int count, const int totalCount, Vector3d& bodyPos)
+//{
+//    double s;
+//    s = PI*(1 - cos(double(count) / totalCount*PI)) / 2;//[0,PI]
+//    bodyPos = 0.5*(p0 + p1) + 0.5*(p0 - p1)*cos(s);
+//}
 
-void plan_bodyStep(const Vector3d& p0, const Vector3d& p1, const int count, const int totalCount, Vector3d& bodyPos, Vector3d& bodyVel)
-{
-    double s,sd;
-    s = PI*(1 - cos(double(count) / totalCount*PI)) / 2;//[0,PI]
-    sd = 0.5*PI*sin(double(count) / totalCount*PI)*(PI / (double(totalCount) / 1000));
+//void plan_bodyStep(const Vector3d& p0, const Vector3d& p1, const int count, const int totalCount, Vector3d& bodyPos, Vector3d& bodyVel)
+//{
+//    double s,sd;
+//    s = PI*(1 - cos(double(count) / totalCount*PI)) / 2;//[0,PI]
+//    sd = 0.5*PI*sin(double(count) / totalCount*PI)*(PI / (double(totalCount) / 1000));
 
-    bodyPos = 0.5*(p0 + p1) + 0.5*(p0 - p1)*cos(s);
-    bodyVel = -0.5*(p0 - p1)*sin(s)*sd;
-}
-void plan_bodyStep(const Vector3d& p0, const Vector3d& p1, const int count, const int totalCount, Vector3d& bodyPos, Vector3d& bodyVel, Vector3d& bodyAcc)
-{
-    double s, sd, sdd;
-    s = PI*(1 - cos(double(count) / totalCount*PI)) / 2;//[0,PI]
-    sd = 0.5*PI*sin(double(count) / totalCount*PI)*(PI / (double(totalCount) / 1000));
-    sdd = 0.5*PI*cos(double(count) / totalCount*PI)*(PI / (double(totalCount) / 1000))*(PI / (double(totalCount) / 1000));
+//    bodyPos = 0.5*(p0 + p1) + 0.5*(p0 - p1)*cos(s);
+//    bodyVel = -0.5*(p0 - p1)*sin(s)*sd;
+//}
+//void plan_bodyStep(const Vector3d& p0, const Vector3d& p1, const int count, const int totalCount, Vector3d& bodyPos, Vector3d& bodyVel, Vector3d& bodyAcc)
+//{
+//    double s, sd, sdd;
+//    s = PI*(1 - cos(double(count) / totalCount*PI)) / 2;//[0,PI]
+//    sd = 0.5*PI*sin(double(count) / totalCount*PI)*(PI / (double(totalCount) / 1000));
+//    sdd = 0.5*PI*cos(double(count) / totalCount*PI)*(PI / (double(totalCount) / 1000))*(PI / (double(totalCount) / 1000));
 
-    bodyPos = 0.5*(p0 + p1) + 0.5*(p0 - p1)*cos(s);
-    bodyVel = -0.5*(p0 - p1)*sin(s)*sd;
-    bodyAcc = -0.5*(p0 - p1)*cos(s)*sd*sd - 0.5*(p0 - p1)*sin(s)*sdd;
-}
+//    bodyPos = 0.5*(p0 + p1) + 0.5*(p0 - p1)*cos(s);
+//    bodyVel = -0.5*(p0 - p1)*sin(s)*sd;
+//    bodyAcc = -0.5*(p0 - p1)*cos(s)*sd*sd - 0.5*(p0 - p1)*sin(s)*sdd;
+//}
 
 
 

@@ -32,6 +32,7 @@ auto stepOverGait(aris::dynamic::Model &model, const aris::dynamic::PlanParamBas
 auto pushWalkParse(const std::string &cmd, const std::map<std::string, std::string> &params, aris::core::Msg &msg)->void;
 auto pushWalkGait(aris::dynamic::Model &model, const aris::dynamic::PlanParamBase &param_in)->int;
 
-
+auto dynCalcParse(const std::string &cmd, const std::map<std::string, std::string> &params, aris::core::Msg &msg)->void;
+auto dynCalcGait(aris::dynamic::Model &model, const aris::dynamic::PlanParamBase &param_in)->int;
 
 #endif // FORCEGAIT_H

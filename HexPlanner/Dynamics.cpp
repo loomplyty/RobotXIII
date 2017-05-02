@@ -14,8 +14,9 @@ namespace Dynamics
 	}
     void Leg::LegInit(const Matrix4d& _leg2BaseTree)
 	{
+        //*** Set Transformation from the body base to the leg***//
 		leg2BaseTree = _leg2BaseTree;
-		// init for joints 
+        //*** initializations for joint types, parents, supports, connecting trees***//
 		JointType _jointTypes[9]{ JointType::Ry ,JointType::Rz,JointType::Px ,JointType::Ry, JointType::Rz, JointType::Px ,JointType::Ry,JointType::Rz,JointType::Px };
 		int _jointParents[9]{ -1,0,1,-1,3,4,-1,6,7 };
 
@@ -66,12 +67,12 @@ namespace Dynamics
 		int s9[3]{ 6,7,8 };
 		joints[8].setSupport(3, s9);
 
-		// init for leg end effector 
+        //*** initialization for leg end effector***//
 		legEE.bodyId = 2;
 		legEE.pR = Vector3d(0.097, 0, 0);
 		fEE.setZero();
 
-		// init for links
+        //*** initialization for links, mass, inertia and COG position***//
 		links[0].m = 0;
 		links[1].m = 11;
 		links[2].m = 5;
@@ -563,7 +564,6 @@ namespace Dynamics
 			for (int i = 0; i < 6; i++)
 				legs[i].setPee(Vector3d(Pleg2B.col(i)));
 		}
-
 	}
     void HexRobot::setVeeL(const Matrix<double, 3, 6>& _legPd, const char frame)
 	{

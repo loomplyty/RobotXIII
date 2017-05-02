@@ -27,13 +27,13 @@ using namespace Eigen;
 
 	 // planning functions 
 
-     void plan_legStep(const Vector3d& p0,const Vector3d& p1, const double stepH,const int count, const int totalCount, Vector3d & legPos);
-     void plan_legStep(const Vector3d& p0, const Vector3d& p1, const double stepH, const int count, const int totalCount, Vector3d & legPos, Vector3d & legVel);
-     void plan_legStep(const Vector3d& p0, const Vector3d& p1, const double stepH, const int count, const int totalCount, Vector3d & legPos, Vector3d & legVel, Vector3d & legAcc);
+//     void plan_legStep(const Vector3d& p0,const Vector3d& p1, const double stepH,const int count, const int totalCount, Vector3d & legPos);
+//     void plan_legStep(const Vector3d& p0, const Vector3d& p1, const double stepH, const int count, const int totalCount, Vector3d & legPos, Vector3d & legVel);
+//     void plan_legStep(const Vector3d& p0, const Vector3d& p1, const double stepH, const int count, const int totalCount, Vector3d & legPos, Vector3d & legVel, Vector3d & legAcc);
 
-     void plan_bodyStep(const Vector3d& p0, const Vector3d& p1,const int count, const int totalCount, Vector3d& bodyPos);
-     void plan_bodyStep(const Vector3d& p0,const  Vector3d& p1, const int count, const int totalCount, Vector3d& bodyPos, Vector3d& bodyVel);
-     void plan_bodyStep(const Vector3d& p0, const Vector3d& p1, const int count, const int totalCount, Vector3d& bodyPos, Vector3d& bodyVel, Vector3d& bodyAcc);
+//     void plan_bodyStep(const Vector3d& p0, const Vector3d& p1,const int count, const int totalCount, Vector3d& bodyPos);
+//     void plan_bodyStep(const Vector3d& p0,const  Vector3d& p1, const int count, const int totalCount, Vector3d& bodyPos, Vector3d& bodyVel);
+//     void plan_bodyStep(const Vector3d& p0, const Vector3d& p1, const int count, const int totalCount, Vector3d& bodyPos, Vector3d& bodyVel, Vector3d& bodyAcc);
 	 
 
 

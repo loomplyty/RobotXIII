@@ -109,7 +109,7 @@ auto stepOverGait(aris::dynamic::Model &model, const aris::dynamic::PlanParamBas
         beginMak.setPrtPm(*robot.body().pm());
         beginMak.update();
         robot.GetPee(beginPee, beginMak);
-        std:cout<<"beginPee got from model"<<std::endl;
+std:cout<<"beginPee got from model"<<std::endl;
         for (int i=0;i<6;i++)
             std::cout<<beginPee[i*3]<<" "<<beginPee[i*3+1]<<" "<<beginPee[i*3+2]<<std::endl;
         mg.init();
@@ -153,7 +153,7 @@ auto stepOverGait(aris::dynamic::Model &model, const aris::dynamic::PlanParamBas
         std::cout<<"initPee"<<paramP2P.initLegPee<<std::endl;
         std::cout<<"targetPee"<<paramP2P.initLegPee<<std::endl;
 
-      }
+    }
     ///*** plan***///
     if(mg.procceed()==-1)
     {
@@ -223,7 +223,7 @@ auto pushWalkGait(aris::dynamic::Model &model, const aris::dynamic::PlanParamBas
         beginMak.setPrtPm(*robot.body().pm());
         beginMak.update();
         robot.GetPee(beginPee, beginMak);
-        std:cout<<"beginPee got from model"<<std::endl;
+std:cout<<"beginPee got from model"<<std::endl;
         for (int i=0;i<6;i++)
             std::cout<<beginPee[i*3]<<" "<<beginPee[i*3+1]<<" "<<beginPee[i*3+2]<<std::endl;
     }
@@ -248,3 +248,60 @@ auto pushWalkGait(aris::dynamic::Model &model, const aris::dynamic::PlanParamBas
 
 }
 
+auto dynCalcParse(const std::string &cmd, const std::map<std::string, std::string> &params, aris::core::Msg &msg)->void
+{
+    aris::server::GaitParamBase param;
+    msg.copyStruct(param);
+}
+auto dynCalcGait(aris::dynamic::Model &model, const aris::dynamic::PlanParamBase &param_in)->int
+{
+    auto &param = static_cast<const aris::server::GaitParamBase &>(param_in);
+    static Dynamics::HexRobot robot;
+    static clock_t start, finish;
+
+    if(param.count==0)
+    {
+        robot.HexInit();
+    }
+
+    start=clock();
+    Matrix<double, 3, 6> qin, qdin, qddin;
+    Matrix<double, 6, 3> p0, p1;
+    p0 <<
+          -0.3, -0.85, -0.65,
+            -0.45, -0.85, 0,
+            -0.3, -0.85, 0.65,
+            0.3, -0.85, -0.65,
+            0.45, -0.85, 0,
+            0.3, -0.85, 0.65;
+    Matrix<double, 3, 6> legPos, legVel, legAcc;
+    legPos = p0.transpose();
+    legVel = Matrix<double, 3, 6>::Zero();
+    legAcc = Matrix<double, 3, 6>::Zero();
+
+    robot.setPeeB(Vector3d(0, 0, 0), Vector3d(0, 0.1, 0), "213");
+    robot.setVeeB(Vector3d(0, 0, 0), Vector3d(0.2, 0, 0));
+    robot.setAeeB(Vector3d(0, 0, 0), Vector3d(0, 0, 0));
+
+    robot.setPeeL(legPos, 'G');
+    robot.setVeeL(legPos, 'G');
+    robot.setAeeL(legPos , 'G');
+    //cout << legAcc << endl;
+
+    robot.getPin(qin);
+    robot.getVin(qdin);
+    robot.getAin(qddin);
+    robot.updateStatus();
+    robot.calcJointTorque();
+    robot.calcResultantWrench();
+
+    finish=clock();
+
+    if(param.count%500==0)
+    {
+        rt_printf("clock per sec: %d, time spent: %f ms.\n",CLOCKS_PER_SEC,double(finish-start)/CLOCKS_PER_SEC*1000.0);
+        rt_printf("robot total force %f %f %f\n",robot.resultantF(0),robot.resultantF(1),robot.resultantF(2));
+        rt_printf("robot total torque %f %f %f\n",robot.resultantM(0),robot.resultantM(1),robot.resultantM(2));
+    }
+
+}
