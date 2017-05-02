@@ -218,6 +218,11 @@ namespace Dynamics
 		_Jp = _JpAll*jvActive2All;
 		_Jo = _JoAll*jvActive2All;
 	}
+    void Leg::getREE(Matrix3d& _R)
+    {
+        _R=joints[2].rm*s_rotz2rm(-20.0/180.0*PI)*s_roty2rm(-PI/2);
+    }
+
 	void Leg::getCRand(int _bodyID, Vector3d& _pLocal, Vector3d & _Cp, Vector3d &_Co)
 	{
 		calcC(_bodyID, _pLocal, _Cp, _Co);

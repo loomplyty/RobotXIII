@@ -81,6 +81,7 @@ public:
     //get the foot tip jacobian w.r.t. active joints L1,L2,L3
     void getJvEE(Matrix3d & _Jp, Matrix3d &_Jo);
     void getCEE(Vector3d & _Jp, Vector3d &_Jo);
+    void getREE(Matrix3d& _R);
 
     //get the anypoint jacobian w.r.t. active joints L1,L2,L3
     void getJvRand(int _bodyID, Vector3d& _pLocal,Matrix3d & _Jp, Matrix3d &_Jo);
@@ -89,6 +90,7 @@ public:
     void getFin(Vector3d& _fIn);
     void setFee(const Vector3d& _fEE);
 
+private:
     // IK calc all nine joints from pee
     void calcIK();
     void calcIKd();

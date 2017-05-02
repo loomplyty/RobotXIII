@@ -2,8 +2,9 @@
 #define DYNAMICSBASE_H
 #include <Eigen/Eigen>
 using namespace Eigen;
+#ifndef PI
 #define PI 3.1415926
-
+#endif
  namespace Dynamics
  {
 	 // mathematic calculation section
