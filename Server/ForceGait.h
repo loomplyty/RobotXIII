@@ -16,8 +16,8 @@
 #include <Robot_Gait.h>
 #include <Robot_Base.h>
 
-#define COUNT_PER_STEP 5000
-#define STEP_NUMBER 3
+#define COUNT_PER_STEP 6000
+#define STEP_NUMBER 8
 struct multiStepParam final:public aris::server::GaitParamBase
 {
     std::int32_t stepCount{COUNT_PER_STEP};

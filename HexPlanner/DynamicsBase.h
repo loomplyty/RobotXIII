@@ -3,7 +3,7 @@
 #include <Eigen/Eigen>
 using namespace Eigen;
 #ifndef PI
-#define PI 3.1415926
+#define PI 3.14159265358979
 #endif
  namespace Dynamics
  {

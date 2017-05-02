@@ -15,6 +15,7 @@ using namespace std;
 #include "move_body.h"
 #include "swing.h"
 #include "twist_waist.h"
+#include "cross_obstacle.h"
 //TY'S gaits
 #include "ForceGait.h"
 #include "ForceTest.h"
@@ -44,6 +45,8 @@ int main(int argc, char *argv[])
     {
         throw std::runtime_error("invalid robot name, please type in III or VIII");
     }
+
+
 
 
 //    clock_t start, finish;
@@ -112,7 +115,7 @@ int main(int argc, char *argv[])
     rs.addCmd("mb", moveBodyParse, moveBodyGait);
     rs.addCmd("sw", swingParse, swingGait);
     rs.addCmd("tw", twistWaistParse, twistWaistGait);
-
+    rs.addCmd("co", crossObstacleParse, crossObstacleGait);
     //ty
     rs.addCmd("ft",ForceTestParse,ForceTestGait);
     rs.addCmd("fg",stepOverParse,stepOverGait);

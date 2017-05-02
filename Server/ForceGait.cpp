@@ -11,40 +11,66 @@
 #endif
 using namespace Dynamics;
 
+const int legPair1[3]{0,2,4};
+const int legPair2[3]{1,5,3};
+
 static bool isPushWalkFinished{false};
 static bool isDynCalcFinished{false};
 
 auto stepOverParse(const std::string &cmd, const std::map<std::string, std::string> &params, aris::core::Msg &msg)->void
 {
-
-
     multiStepParam param;
 
 
-    Matrix<double, 3, 6> legPeeSeq[4];
-    Vector3d bodyPeeSeq[4];
+    Matrix<double, 3, 6> legPeeSeq[9];
+    Vector3d bodyPeeSeq[9];
 
     legPeeSeq[0]<<
-                   -0.6, -0.8, -0.6, 0.6, 0.8, 0.6,
+            -0.6, -0.8, -0.6, 0.6, 0.8, 0.6,
             -0.9, -0.9, -0.9, -0.9, -0.9, -0.9,
             -0.6, 0, 0.6, -0.6, 0, 0.6;
     legPeeSeq[1]<<
-                   -0.6, -0.8, -0.6, 0.6, 0.8, 0.6,
+            -0.8, -0.8, -0.8, 0.6, 0.6, 0.6,
             -0.9, -0.9, -0.9, -0.9, -0.9, -0.9,
             -0.6, 0, 0.6, -0.6, 0, 0.6;
     legPeeSeq[2]<<
-                   -0.6, -0.8, -0.6, 0.6, 0.8, 0.6,
+            -0.8, -1.5, -0.8, -0.1, 0.6, -0.1,
             -0.9, -0.9, -0.9, -0.9, -0.9, -0.9,
             -0.6, 0, 0.6, -0.6, 0, 0.6;
     legPeeSeq[3]<<
-                   -0.6, -0.8, -0.6, 0.6, 0.8, 0.6,
+            -1.5, -1.5, -1.5, -0.1, -0.1, -0.1,
             -0.9, -0.9, -0.9, -0.9, -0.9, -0.9,
             -0.6, 0, 0.6, -0.6, 0, 0.6;
-    bodyPeeSeq[0]=Vector3d(0,0,0);
-    bodyPeeSeq[1]=Vector3d(0,0.0,0);
-    bodyPeeSeq[2]=Vector3d(0,0.0,0);
-    bodyPeeSeq[3]=Vector3d(0,0.0,0);
+    legPeeSeq[4]<<
+            -1.5, -2.2, -1.5, -0.8, -0.1, -0.8,
+            -0.9, -0.9, -0.9, -0.9, -0.9, -0.9,
+            -0.6, 0, 0.6, -0.6, 0, 0.6;
+    legPeeSeq[5]<<
+            -2.2, -2.2, -2.2, -0.8, -0.8, -0.8,
+            -0.9, -0.9, -0.9, -0.9, -0.9, -0.9,
+            -0.6, 0, 0.6, -0.6, 0, 0.6;
+    legPeeSeq[6]<<
+            -2.2, -2.9, -2.2, -1.5, -0.8, -1.5,
+            -0.9, -0.9, -0.9, -0.9, -0.9, -0.9,
+            -0.6, 0, 0.6, -0.6, 0, 0.6;
+    legPeeSeq[7]<<
+            -2.9, -2.9, -2.9, -1.5, -1.5, -1.5,
+            -0.9, -0.9, -0.9, -0.9, -0.9, -0.9,
+            -0.6, 0, 0.6, -0.6, 0, 0.6;
+    legPeeSeq[8]<<
+            -2.9, -3.1, -2.9, -1.7, -1.5, -1.7,
+            -0.9, -0.9, -0.9, -0.9, -0.9, -0.9,
+            -0.6, 0, 0.6, -0.6, 0, 0.6;
 
+    bodyPeeSeq[0]=Vector3d(0,0,0);
+    bodyPeeSeq[1]=Vector3d(-0.1,0.12,0);
+    bodyPeeSeq[2]=Vector3d(-0.45,0.12,0);
+    bodyPeeSeq[3]=Vector3d(-0.8,0.12,0);
+    bodyPeeSeq[4]=Vector3d(-1.15,0.12,0);
+    bodyPeeSeq[5]=Vector3d(-1.5,0.12,0);
+    bodyPeeSeq[6]=Vector3d(-1.85,0.12,0);
+    bodyPeeSeq[7]=Vector3d(-2.2,0.12,0);
+    bodyPeeSeq[8]=Vector3d(-2.3,0,0);
 
 
     for(int N=0;N<STEP_NUMBER;N++)
@@ -55,12 +81,24 @@ auto stepOverParse(const std::string &cmd, const std::map<std::string, std::stri
         param.stepParam[N].initBodyR=Matrix3d::Identity();
         param.stepParam[N].targetBodyR=Matrix3d::Identity();
         param.stepParam[N].totalCount = COUNT_PER_STEP;
-        param.stepParam[N].stepHeight = 0.04;
         param.stepParam[N].initBodyPee = bodyPeeSeq[N];
         param.stepParam[N].targetBodyPee = bodyPeeSeq[N+1];
         std::cout<<param.stepParam[N].initBodyPee<<std::endl;
         std::cout<<param.stepParam[N].targetBodyPee<<std::endl;
-
+        if(N%2==0)
+        {
+            memcpy(param.stepParam[N].swingID,legPair1,sizeof(legPair1));
+            memcpy(param.stepParam[N].stanceID,legPair2,sizeof(legPair1));
+        }
+        else
+        {
+            memcpy(param.stepParam[N].swingID,legPair2,sizeof(legPair1));
+            memcpy(param.stepParam[N].stanceID,legPair1,sizeof(legPair1));
+        }
+        if(N==0||N==7)
+            param.stepParam[N].stepHeight = 0.08;
+        else
+            param.stepParam[N].stepHeight = 0.25;
     }
 
     msg.copyStruct(param);
@@ -82,10 +120,10 @@ auto stepOverGait(aris::dynamic::Model &model, const aris::dynamic::PlanParamBas
     {
         beginMak.setPrtPm(*robot.body().pm());
         beginMak.update();
-//        robot.GetPee(beginPee, beginMak);
-//        std:cout<<"beginPee got from model"<<std::endl;
-//        for (int i=0;i<6;i++)
-//            std::cout<<beginPee[i*3]<<" "<<beginPee[i*3+1]<<" "<<beginPee[i*3+2]<<std::endl;
+        //        robot.GetPee(beginPee, beginMak);
+        //        std:cout<<"beginPee got from model"<<std::endl;
+        //        for (int i=0;i<6;i++)
+        //            std::cout<<beginPee[i*3]<<" "<<beginPee[i*3+1]<<" "<<beginPee[i*3+2]<<std::endl;
         mg.init();
         robotTY.HexInit();
     }
@@ -111,11 +149,15 @@ auto stepOverGait(aris::dynamic::Model &model, const aris::dynamic::PlanParamBas
     robotTY.setPeeL(legPeeM,'G');
     robotTY.getPin(PinM);
 
-    if(param.count%500==0)
+    if(param.count%5000==0)
     {
-       std::cout<<"Pin ty"<<PinM<<std::endl;
-       for(int i=0;i<6;i++)
-            std::cout<<"Pin py"<<Pin[3*i]<<Pin[3*i+1]<<Pin[3*i+2]<<std::endl;
+
+        std::cout<<"bodyPee"<<bodyPeeM<<std::endl;
+        std::cout<<"legPee"<<legPeeM<<std::endl;
+
+        std::cout<<"Pin ty"<<PinM<<std::endl;
+        for(int i=0;i<6;i++)
+            std::cout<<"Pin py"<<Pin[3*i]<<" "<<Pin[3*i+1]<<" "<<Pin[3*i+2]<<std::endl;
     }
 
     Matrix3d Ree{Matrix3d::Identity()};
@@ -128,12 +170,12 @@ auto stepOverGait(aris::dynamic::Model &model, const aris::dynamic::PlanParamBas
         robotTY.legs[i].getREE(Ree);
         data.forceData.col(i)=Ree*Vector3d(param.ruicong_data->at(0).force[i].Fx,param.ruicong_data->at(0).force[i].Fy,param.ruicong_data->at(0).force[i].Fz);
     }
-    if(param.count%200==0)
-    {
-        std::cout<<"force data calculated: "<<std::endl;
-        std::cout<<data.forceData<<std::endl;
+//    if(param.count%200==0)
+//    {
+//        std::cout<<"force data calculated: "<<std::endl;
+//        std::cout<<data.forceData<<std::endl;
 
-    }
+//    }
     double euler[3];
     param.imu_data->toEulBody2Ground(euler,"213");
     data.imuData=Vector3d(euler);
@@ -256,9 +298,9 @@ auto pushWalkGait(aris::dynamic::Model &model, const aris::dynamic::PlanParamBas
         legPeeM(2,i)=legPee[i*3+2];
     }
     bodyPeeM=Vector3d(bodyPee[0],bodyPee[1],bodyPee[2]);
-//    std:cout<<"legPee got from model"<<std::endl;
-//    for (int i=0;i<6;i++)
-//        std::cout<<legPee[i*3]<<" "<<legPee[i*3+1]<<" "<<legPee[i*3+2]<<std::endl;
+    //    std:cout<<"legPee got from model"<<std::endl;
+    //    for (int i=0;i<6;i++)
+    //        std::cout<<legPee[i*3]<<" "<<legPee[i*3+1]<<" "<<legPee[i*3+2]<<std::endl;
 
     robotTY.setPeeB(bodyPeeM,Matrix3d::Identity());
     robotTY.setPeeL(legPeeM,'G');
@@ -269,7 +311,7 @@ auto pushWalkGait(aris::dynamic::Model &model, const aris::dynamic::PlanParamBas
     for(int i=0;i<6;i++)
     {
         robotTY.legs[i].getREE(Ree);
-         Vector3d fsensor(param.ruicong_data->at(0).force[i].Fx,param.ruicong_data->at(0).force[i].Fy,param.ruicong_data->at(0).force[i].Fz);
+        Vector3d fsensor(param.ruicong_data->at(0).force[i].Fx,param.ruicong_data->at(0).force[i].Fy,param.ruicong_data->at(0).force[i].Fz);
 
         totalF+=Ree*fsensor;
         totalM+=(legPeeM.col(i)-bodyPeeM).cross(Ree*fsensor);
@@ -277,9 +319,9 @@ auto pushWalkGait(aris::dynamic::Model &model, const aris::dynamic::PlanParamBas
     finish=clock();
     if(param.count%500==0)
     {
-//        for (int i=0;i<6;i++)
-//            std::cout<<legPee[i*3]<<" "<<legPee[i*3+1]<<" "<<legPee[i*3+2]<<std::endl;
-//        std::cout<<"bodyPee"<<bodyPee[0]<<" "<<bodyPee[1]<<" "<<bodyPee[2]<<std::endl;
+        //        for (int i=0;i<6;i++)
+        //            std::cout<<legPee[i*3]<<" "<<legPee[i*3+1]<<" "<<legPee[i*3+2]<<std::endl;
+        //        std::cout<<"bodyPee"<<bodyPee[0]<<" "<<bodyPee[1]<<" "<<bodyPee[2]<<std::endl;
         rt_printf("clock per sec: %d, time spent: %f ms.\n",CLOCKS_PER_SEC,double(finish-start)/CLOCKS_PER_SEC*1000.0);
 
         rt_printf("totalF: %f %f %f\n ",totalF(0),totalF(1),totalF(2));
