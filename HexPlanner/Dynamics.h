@@ -24,9 +24,9 @@ struct MotionPoint
 class Leg
 {
 public: //leg topological parameters
-    double D{ 0.270 };
+    double D{ 0.268 };
     double d{ 0.074 };
-    double H{ 0.234 };
+    double H{ 0.232 };
     double h{ 0.059 };
     Matrix4d leg2BaseTree{Matrix4d::Zero()};
     int legId;

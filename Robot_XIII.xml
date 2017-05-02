@@ -729,8 +729,8 @@
                 <Motion4 type="ElmoSoloWhistle"  min_pos="0.690" max_pos="1.100" max_vel="0.1706" home_pos="0.690" input2count="51200000" abs_id="5"/>
                 <Motion5 type="ElmoSoloWhistle"  min_pos="0.669" max_pos="1.080" max_vel="0.1706" home_pos="0.669" input2count="51200000" abs_id="3"/>
                 <Motion6 type="ElmoSoloWhistle"  min_pos="0.690" max_pos="1.100" max_vel="0.1706" home_pos="0.690" input2count="51200000" abs_id="4"/>
-                <Motion7 type="ElmoSoloWhistle"  min_pos="0.690" max_pos="1.100" max_vel="0.1706" home_pos="0.690" input2count="51200000" abs_id="0"/>
-                <Motion8 type="ElmoSoloWhistle"  min_pos="0.669" max_pos="1.080" max_vel="0.1706" home_pos="0.669" input2count="51200000" abs_id="2"/>
+                <Motion7 type="ElmoSoloWhistle"  min_pos="0.669" max_pos="1.080" max_vel="0.1706" home_pos="0.669" input2count="51200000" abs_id="0"/>
+                <Motion8 type="ElmoSoloWhistle"  min_pos="0.690" max_pos="1.100" max_vel="0.1706" home_pos="0.690" input2count="51200000" abs_id="2"/>
                 <Motion9 type="ElmoSoloWhistle"  min_pos="0.690" max_pos="1.100" max_vel="0.1706" home_pos="0.690" input2count="51200000" abs_id="1"/>
                 <Motion10 type="ElmoSoloWhistle" min_pos="0.690" max_pos="1.100" max_vel="0.1706" home_pos="0.690" input2count="51200000" abs_id="11"/>
                 <Motion11 type="ElmoSoloWhistle" min_pos="0.669" max_pos="1.080" max_vel="0.1706" home_pos="0.669" input2count="51200000" abs_id="9"/>

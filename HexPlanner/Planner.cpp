@@ -177,14 +177,14 @@ void StepTDStop(const StepParams* params_in, MotionStatusUpdater& updater)
          //   std::cout<<"Swing legs :  "<<params.swingID[0]<<" "<<params.swingID[1]<<" "<<params.swingID[2]<<std::endl;
         //    std::cout<<"foot force "<<i<<": "<<updater.sensorData.forceData(2, i)<<std::endl;
             case Swing:
-                if (abs(updater.sensorData.forceData(2, i))> updater.TDThreshold)//Fz
+                if (abs(updater.sensorData.forceData(1, i))> updater.TDThreshold)//Fy
                 {
                     updater.legState[i] = Trans;
                     updater.TDLegPos.col(i) = updater.lastConfig.LegPee.col(i);
                 }
                 break;
             case Trans:
-                if (abs(updater.sensorData.forceData(2, i)) >updater.SupportThreshold)//Fz
+                if (abs(updater.sensorData.forceData(1, i)) >updater.SupportThreshold)//Fy
                 {
                     updater.legState[i] = Stance;
                     updater.supportLegPos.col(i) = updater.lastConfig.LegPee.col(i);
@@ -268,14 +268,14 @@ void StepTDImpedance(const StepParams* params_in,MotionStatusUpdater& updater)
           //  std::cout<<"Swing legs :  "<<params.swingID[0]<<" "<<params.swingID[1]<<" "<<params.swingID[2]<<std::endl;
         //    std::cout<<"foot force "<<i<<": "<<updater.sensorData.forceData(2, i)<<std::endl;
             case Swing:
-                if (abs(updater.sensorData.forceData(2, i))> updater.TDThreshold)//Fz
+                if (abs(updater.sensorData.forceData(1, i))> updater.TDThreshold)//Fy
                 {
                     updater.legState[i] = Trans;
                     updater.TDLegPos.col(i) = updater.lastConfig.LegPee.col(i);
                 }
                 break;
             case Trans:
-                if (abs(updater.sensorData.forceData(2, i)) >updater.SupportThreshold)//Fz
+                if (abs(updater.sensorData.forceData(1, i)) >updater.SupportThreshold)//Fy
                 {
                     updater.legState[i] = Stance;
                     updater.supportLegPos.col(i) = updater.lastConfig.LegPee.col(i);
@@ -306,20 +306,20 @@ void StepTDImpedance(const StepParams* params_in,MotionStatusUpdater& updater)
             updater.currentConfig.LegPee.col(i) = updater.plannedConfig.LegPee.col(i);
             break;
         case Trans:
-            static Vector3d legAcc(0,0,0);
-            static Vector3d desireP(0,-0.85,0);
-            static Vector3d desireV(0,0,0);
-            //static Vector3d desireA(0,0,0);
-            static Vector3d desireF(0,-100,0);
+            static double legAcc{0};
+            static double desirePy{-0.85};
+            static double desireVy{0};
+            static double desireFy{-100};
 
             static MechanicalImpedance imp;
             imp.M=400;
-            imp.C=2000;
+            imp.C=1800;
             imp.K=2000;
 
-            legAcc=-1.0/imp.M*(imp.K*(updater.lastConfig.LegPee.col(i)-desireP)+imp.C*(updater.lastLegVee.col(i)-desireV)+(updater.sensorData.forceData.col(i)-desireF));
+            legAcc=-1.0/imp.M*(imp.K*(updater.lastConfig.LegPee(1,i)-desirePy)+imp.C*(updater.lastLegVee(1,i)-desireVy)+(updater.sensorData.forceData(1,i)-desireFy));
 
-            updater.currentConfig.LegPee.col(i) =updater.lastConfig.LegPee.col(i)+updater.lastLegVee.col(i)*(1.0/COUNT_PER_SEC)+0.5*legAcc*(1.0/COUNT_PER_SEC)*(1.0/COUNT_PER_SEC);
+            updater.currentConfig.LegPee.col(i) =updater.lastConfig.LegPee.col(i);
+            updater.currentConfig.LegPee(1,i)+=updater.lastLegVee(1,i)*(1.0/COUNT_PER_SEC)+0.5*legAcc*(1.0/COUNT_PER_SEC)*(1.0/COUNT_PER_SEC);
             break;
         case Stance:
             updater.currentConfig.LegPee.col(i) = updater.supportLegPos.col(i);

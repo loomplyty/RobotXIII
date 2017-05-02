@@ -76,33 +76,68 @@ auto stepOverGait(aris::dynamic::Model &model, const aris::dynamic::PlanParamBas
     static SensorData data;
 
     static aris::dynamic::FloatMarker beginMak{robot.ground()};
-    static double beginPee[18];
-    static double bodyPee[6];
 
+    static Dynamics::HexRobot robotTY;
     if (param.count == 0)
     {
         beginMak.setPrtPm(*robot.body().pm());
         beginMak.update();
-        robot.GetPee(beginPee, beginMak);
-        std:cout<<"beginPee got from model"<<std::endl;
-        for (int i=0;i<6;i++)
-            std::cout<<beginPee[i*3]<<" "<<beginPee[i*3+1]<<" "<<beginPee[i*3+2]<<std::endl;
+//        robot.GetPee(beginPee, beginMak);
+//        std:cout<<"beginPee got from model"<<std::endl;
+//        for (int i=0;i<6;i++)
+//            std::cout<<beginPee[i*3]<<" "<<beginPee[i*3+1]<<" "<<beginPee[i*3+2]<<std::endl;
         mg.init();
+        robotTY.HexInit();
     }
 
+    //*** calc the full-body resultant force via force sensors***//
+    static double legPee[18];
+    static double bodyPee[6];
+    static double Pin[18];
+    static Matrix<double,3,6> legPeeM,PinM;
+    static Vector3d bodyPeeM;
+    robot.GetPee(legPee, beginMak);
+    robot.GetPeb(bodyPee,beginMak);
+    robot.GetPin(Pin);
+    for(int i=0;i<6;i++)
+    {
+        legPeeM(0,i)=legPee[i*3];
+        legPeeM(1,i)=legPee[i*3+1];
+        legPeeM(2,i)=legPee[i*3+2];
+    }
+    bodyPeeM=Vector3d(bodyPee[0],bodyPee[1],bodyPee[2]);
+
+    robotTY.setPeeB(bodyPeeM,Matrix3d::Identity());
+    robotTY.setPeeL(legPeeM,'G');
+    robotTY.getPin(PinM);
+
+    if(param.count%500==0)
+    {
+       std::cout<<"Pin ty"<<PinM<<std::endl;
+       for(int i=0;i<6;i++)
+            std::cout<<"Pin py"<<Pin[3*i]<<Pin[3*i+1]<<Pin[3*i+2]<<std::endl;
+    }
+
+    Matrix3d Ree{Matrix3d::Identity()};
 
     ////********************** begin ty's planning******************************//
     ////**update sensor data**//
 
     for (int i=0;i<6;i++)
     {
-        data.forceData.col(i)=Vector3d(param.ruicong_data->at(0).force[i].Fx,param.ruicong_data->at(0).force[i].Fy,param.ruicong_data->at(0).force[i].Fz);
+        robotTY.legs[i].getREE(Ree);
+        data.forceData.col(i)=Ree*Vector3d(param.ruicong_data->at(0).force[i].Fx,param.ruicong_data->at(0).force[i].Fy,param.ruicong_data->at(0).force[i].Fz);
+    }
+    if(param.count%200==0)
+    {
+        std::cout<<"force data calculated: "<<std::endl;
+        std::cout<<data.forceData<<std::endl;
+
     }
     double euler[3];
     param.imu_data->toEulBody2Ground(euler,"213");
     data.imuData=Vector3d(euler);
     mg.updateSensorData(data);
-
     mg.motionUpdater.isForceSensorApplied=true;
 
     ///****  init step, update params, set planner and modifier***//
@@ -226,7 +261,7 @@ auto pushWalkGait(aris::dynamic::Model &model, const aris::dynamic::PlanParamBas
 //        std::cout<<legPee[i*3]<<" "<<legPee[i*3+1]<<" "<<legPee[i*3+2]<<std::endl;
 
     robotTY.setPeeB(bodyPeeM,Matrix3d::Identity());
-    robotTY.setPeeL(legPeeM,'B');
+    robotTY.setPeeL(legPeeM,'G');
     Vector3d totalF(0,0,0);
     Vector3d totalM(0,0,0);
     Matrix3d Ree{Matrix3d::Identity()};

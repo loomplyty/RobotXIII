@@ -69,7 +69,7 @@ namespace Dynamics
 
         //*** initialization for leg end effector***//
 		legEE.bodyId = 2;
-		legEE.pR = Vector3d(0.097, 0, 0);
+        legEE.pR = Vector3d(0.142, -0.034, 0);
 		fEE.setZero();
 
         //*** initialization for links, mass, inertia and COG position***//
@@ -202,13 +202,13 @@ namespace Dynamics
 		//calc for L1,L2,L3 w.r.t.all joints
 		//calc for jacobian w.r.t. all joints  and transform it to L1,L2,L3
 		Matrix<double, 3, 9>  _JpAll, _JoAll;
-		calcJac(2, Vector3d(0.097, 0, 0), _JpAll, _JoAll);
+        calcJac(2, legEE.pR, _JpAll, _JoAll);
 		_Jp = _JpAll*jvActive2All;
 		_Jo = _JoAll*jvActive2All;
 	}
 	void Leg::getCEE(Vector3d & _Cp, Vector3d &_Co)
 	{
-		calcC(2, Vector3d(0.097, 0, 0), _Cp, _Co);
+        calcC(2, legEE.pR, _Cp, _Co);
 	}
 	void Leg::getJvRand(int _bodyID, Vector3d& _pLocal, Matrix3d & _Jp, Matrix3d &_Jo)
 	{
@@ -532,13 +532,13 @@ namespace Dynamics
 	{
 		Matrix<double, 6, 3> hipPee2B;
 		hipPee2B <<
-			-0.0679295, 0, -0.354,
-			-0.1234141, 0, 0,
-			-0.0679295, 0, 0.354,
-			0.0679295, 0, -0.354,
-			0.1234141, 0, 0,
-			0.0679295, 0, 0.354;
-		double thetaYHip[6]{ PI*5.0 / 6.0,PI,PI*7.0 / 6.0,PI / 6.0,0,-PI / 6.0 };
+            -0.43322, 0, -0.19907,
+            -0.48305, 0, 0,
+            -0.43322, 0, 0.19907,
+            0.43322, 0, -0.19907,
+            0.48305, 0, 0,
+            0.43322, 0, 0.19907;
+        double thetaYHip[6]{ PI*2.0 / 3.0,PI,PI*4.0 / 3.0,PI / 3.0,0,-PI / 3.0 };
 		double thetaZHip[6]{ -PI*7.0 / 18.0,-PI*7.0 / 18.0,-PI*7.0 / 18.0 ,-PI*7.0 / 18.0 ,-PI*7.0 / 18.0,-PI*7.0 / 18.0 };
 
 		Matrix4d legNodeTree;
