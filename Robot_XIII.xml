@@ -567,9 +567,15 @@
             <fg/>            
             <pw default="pw_param">
                 <pw_param type="unique">
+                    <begin abbreviation="b"/>
                     <stop abbreviation="s"/>
                 </pw_param>
             </pw>
+            <dc default="dc_param">
+                <dc_param type="unique">
+                    <begin abbreviation="b"/>
+                    <stop abbreviation="s"/>
+                </dc_param>
             </dc>
             <tw default="tw_param">
                 <tw_param type="group">

@@ -12,9 +12,12 @@
 using namespace Dynamics;
 
 static bool isPushWalkFinished{false};
+static bool isDynCalcFinished{false};
 
 auto stepOverParse(const std::string &cmd, const std::map<std::string, std::string> &params, aris::core::Msg &msg)->void
 {
+
+
     multiStepParam param;
 
 
@@ -56,7 +59,8 @@ auto stepOverParse(const std::string &cmd, const std::map<std::string, std::stri
         param.stepParam[N].initBodyPee = bodyPeeSeq[N];
         param.stepParam[N].targetBodyPee = bodyPeeSeq[N+1];
         std::cout<<param.stepParam[N].initBodyPee<<std::endl;
-        std::cout<<param.stepParam[N].targetBodyPee<<std::endl;
+        std::cout<<param.stepParam[N].targetBodyPee<<    static clock_t start, finish;
+std::endl;
 
     }
 
@@ -115,11 +119,12 @@ std:cout<<"beginPee got from model"<<std::endl;
         mg.init();
     }
 
+    static clock_t start, finish;
 
     ////********************** begin ty's planning******************************//
     ////**update sensor data**//
 
-
+    start=clock();
     for (int i=0;i<6;i++)
     {
         data.forceData.col(i)=Vector3d(param.ruicong_data->at(0).force[i].Fx,param.ruicong_data->at(0).force[i].Fy,param.ruicong_data->at(0).force[i].Fz);
@@ -188,6 +193,10 @@ std:cout<<"beginPee got from model"<<std::endl;
     robot.SetPeb(Peb, beginMak);
     robot.SetPee(Pee, beginMak);
 
+    finish=clock();
+    if(param.count%500==0)
+        rt_printf("clock per sec: %d, time spent: %f ms.\n",CLOCKS_PER_SEC,double(finish-start)/CLOCKS_PER_SEC*1000.0);
+
     if(mg.motionUpdater.getStepCount() == param.stepN)
     {
         std::cout<<"zero returned!!!!!!!!!!!!!!!"<<std::endl;
@@ -207,8 +216,13 @@ auto pushWalkParse(const std::string &cmd, const std::map<std::string, std::stri
         {
             isPushWalkFinished=true;
         }
+        else if(i.first == "begin")
+        {
+            isPushWalkFinished=false;
+            msg.copyStruct(param);
+        }
+
     }
-    msg.copyStruct(param);
 }
 auto pushWalkGait(aris::dynamic::Model &model, const aris::dynamic::PlanParamBase &param_in)->int
 {
@@ -241,17 +255,30 @@ std:cout<<"beginPee got from model"<<std::endl;
         rt_printf("totalM: %f %f %f\n ",totalM(0),totalM(1),totalM(2));
     }
 
-    if(isPushWalkFinished=false)
+    if(isPushWalkFinished==false)
         return 1;
     else
         return 0;
 
 }
 
+
 auto dynCalcParse(const std::string &cmd, const std::map<std::string, std::string> &params, aris::core::Msg &msg)->void
 {
     aris::server::GaitParamBase param;
-    msg.copyStruct(param);
+    for (auto &i : params)
+    {
+        if (i.first == "stop")
+        {
+            isDynCalcFinished=true;
+        }
+        else if(i.first == "begin")
+        {
+            isDynCalcFinished=false;
+            msg.copyStruct(param);
+        }
+
+    }
 }
 auto dynCalcGait(aris::dynamic::Model &model, const aris::dynamic::PlanParamBase &param_in)->int
 {
@@ -302,6 +329,12 @@ auto dynCalcGait(aris::dynamic::Model &model, const aris::dynamic::PlanParamBase
         rt_printf("clock per sec: %d, time spent: %f ms.\n",CLOCKS_PER_SEC,double(finish-start)/CLOCKS_PER_SEC*1000.0);
         rt_printf("robot total force %f %f %f\n",robot.resultantF(0),robot.resultantF(1),robot.resultantF(2));
         rt_printf("robot total torque %f %f %f\n",robot.resultantM(0),robot.resultantM(1),robot.resultantM(2));
+        //rt_printf("is finished %d\n",isDynCalcFinished);
+
     }
 
+    if(isDynCalcFinished==false)
+        return 1;
+    else
+        return 0;
 }

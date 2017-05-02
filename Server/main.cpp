@@ -46,55 +46,55 @@ int main(int argc, char *argv[])
     }
 
 
-    clock_t start, finish;
-    Dynamics::HexRobot robot;
-    robot.HexInit();
-    Matrix<double, 3, 6> qin, qdin, qddin;
+//    clock_t start, finish;
+//    Dynamics::HexRobot robot;
+//    robot.HexInit();
+//    Matrix<double, 3, 6> qin, qdin, qddin;
 
-    start=clock();
-    for(int i=0;i<1000;i++)
-    {
-        Matrix<double, 6, 3> p0, p1;
-        p0 <<
-              -0.3, -0.85, -0.65,
-                -0.45, -0.85, 0,
-                -0.3, -0.85, 0.65,
-                0.3, -0.85, -0.65,
-                0.45, -0.85, 0,
-                0.3, -0.85, 0.65;
-        Matrix<double, 3, 6> legPos, legVel, legAcc;
-        legPos = p0.transpose();
-        legVel = Matrix<double, 3, 6>::Zero();
-        legAcc = Matrix<double, 3, 6>::Zero();
+//    start=clock();
+//    for(int i=0;i<1000;i++)
+//    {
+//        Matrix<double, 6, 3> p0, p1;
+//        p0 <<
+//              -0.3, -0.85, -0.65,
+//                -0.45, -0.85, 0,
+//                -0.3, -0.85, 0.65,
+//                0.3, -0.85, -0.65,
+//                0.45, -0.85, 0,
+//                0.3, -0.85, 0.65;
+//        Matrix<double, 3, 6> legPos, legVel, legAcc;
+//        legPos = p0.transpose();
+//        legVel = Matrix<double, 3, 6>::Zero();
+//        legAcc = Matrix<double, 3, 6>::Zero();
 
-        robot.setPeeB(Vector3d(0, 0, 0), Vector3d(0, 0.1, 0), "213");
-        robot.setVeeB(Vector3d(0, 0, 0), Vector3d(0.2, 0, 0));
-        robot.setAeeB(Vector3d(0, 0, 0), Vector3d(0, 0, 0));
+//        robot.setPeeB(Vector3d(0, 0, 0), Vector3d(0, 0.1, 0), "213");
+//        robot.setVeeB(Vector3d(0, 0, 0), Vector3d(0.2, 0, 0));
+//        robot.setAeeB(Vector3d(0, 0, 0), Vector3d(0, 0, 0));
 
-        robot.setPeeL(legPos, 'G');
-        robot.setVeeL(legPos, 'G');
-        robot.setAeeL(legPos , 'G');
-        //cout << legAcc << endl;
+//        robot.setPeeL(legPos, 'G');
+//        robot.setVeeL(legPos, 'G');
+//        robot.setAeeL(legPos , 'G');
+//        //cout << legAcc << endl;
 
-        robot.getPin(qin);
-        robot.getVin(qdin);
-        robot.getAin(qddin);
-        robot.updateStatus();
-        robot.calcJointTorque();
-        robot.calcResultantWrench();
-    }
+//        robot.getPin(qin);
+//        robot.getVin(qdin);
+//        robot.getAin(qddin);
+//        robot.updateStatus();
+//        robot.calcJointTorque();
+//        robot.calcResultantWrench();
+//    }
 
 
-    finish=clock();
-    cout << "clocks per sec:" << CLOCKS_PER_SEC << "time spent" << double(finish - start) / CLOCKS_PER_SEC * 1000 << "ms" << endl;
-    cout << "qin" << endl;
-    cout << qin << endl;
-    cout << "qdin" << endl;
-    cout << qdin << endl;
-    cout << "qddin" << endl;
-    cout << qddin << endl;
-    cout<<"robot total force"<<robot.resultantF<<endl;
-    cout<<"robot total torque"<<robot.resultantM<<endl;
+//    finish=clock();
+//    cout << "clocks per sec:" << CLOCKS_PER_SEC << "time spent" << double(finish - start) / CLOCKS_PER_SEC * 1000 << "ms" << endl;
+//    cout << "qin" << endl;
+//    cout << qin << endl;
+//    cout << "qdin" << endl;
+//    cout << qdin << endl;
+//    cout << "qddin" << endl;
+//    cout << qddin << endl;
+//    cout<<"robot total force"<<robot.resultantF<<endl;
+//    cout<<"robot total torque"<<robot.resultantM<<endl;
 
 
     auto &rs = aris::server::ControlServer::instance();
