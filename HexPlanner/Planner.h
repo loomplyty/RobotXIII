@@ -54,7 +54,7 @@ struct StepParams// only update during the first call of the step motion generat
 	int totalCount{5000};
 	double stepHeight;
 
-    double dutyF{ 0.6};
+    double dutyF{ 0.5};
     int stanceID[3]{ 0,2,4 };
     int swingID[3]{ 1,5,3 };
 };
@@ -83,8 +83,8 @@ struct StepParamsNavigation :StepParams
 class MotionStatusUpdater// update every count
 {
 public:
-    double SupportThreshold{ 60 };//kg
-    double TDThreshold{ 30 };
+    double SupportThreshold{40};//kg
+    double TDThreshold{20};
 	Matrix<double, 3, 6> supportLegPos;
 	Matrix<double, 3, 6> TDLegPos;
 	RobotConfiguration plannedConfig;
@@ -183,7 +183,7 @@ void StepTDStop(const StepParams* params, MotionStatusUpdater& planner);
 void StepTDTime(const StepParams* params, MotionStatusUpdater& planner);
 void StepTDImpedance(const StepParams* params_in,MotionStatusUpdater& updater);
 
-
+void PlanTrajEllipsoidSimple(const Vector3d& p0, const Vector3d& p1, const double stepH, const int count, const int totalCount, Vector3d& p);
 void PlanTrajEllipsoid(const Vector3d& p0, const Vector3d& p1, const double stepH, const int count, const int totalCount, Vector3d& p);
 void PlanRbyQuatInterp(const Matrix3d& R0, const Matrix3d& R1, const int count, const int totalCount, Matrix3d& R);
 void PlanTrajCubic(const Vector3d& p0, const Vector3d& p1, const Vector3d& v0, const Vector3d& v1, const int count, const int totalCount, Vector3d& p);

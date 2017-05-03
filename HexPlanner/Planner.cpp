@@ -114,7 +114,6 @@ void StepPlannerP2P(const StepParams* params_in, MotionStatusUpdater& updater)
 
         updater.plannedConfig.BodyPee = params.targetBodyPee;
         updater.plannedConfig.BodyR = params.targetBodyR;
-
     }
 }
 void StepPlannerCubic(const StepParams* params_in, MotionStatusUpdater& updater)
@@ -127,7 +126,7 @@ void StepPlannerCubic(const StepParams* params_in, MotionStatusUpdater& updater)
         Vector3d swingP;
         for (int i : params.swingID)
         {
-            PlanTrajEllipsoid(params.initLegPee.col(i), params.targetLegPee.col(i), params.stepHeight, updater.getCount(), params.totalCount, swingP);
+            PlanTrajEllipsoidSimple(params.initLegPee.col(i), params.targetLegPee.col(i), params.stepHeight, updater.getCount(), params.totalCount, swingP);
             updater.plannedConfig.LegPee.col(i) = swingP;
             //std::cout << "plan for leg:" << i << "pee is: "<<swingP<<std::endl;
         }
@@ -589,6 +588,27 @@ void PlanTrajEllipsoid(const Vector3d& p0, const Vector3d& p1, const double step
     s = PI*(1 - cos(double(count) / totalCount*PI)) / 2;//[0,PI]
     Vector3d axisShort(0, stepH, 0);
     p = 0.5*(p0 + p1) + 0.5*(p0 - p1)*cos(s) + axisShort*sin(s);
+}
+void PlanTrajEllipsoidSimple(const Vector3d& p0, const Vector3d& p1, const double stepH, const int count, const int totalCount, Vector3d& p)
+{
+    double s;
+    s = PI*double(count)/totalCount;//[0,PI]
+    p(0) = p0(0)+(p1(0)-p0(0))*(1-cos(s))/2;
+    p(2) = p0(2)+(p1(2)-p0(2))*(1-cos(s))/2;
+    if(count<totalCount/2.0)
+    {
+        double s1;
+        s1=PI*(double(count)/(totalCount/2.0));
+        p(1)=p0(1)+(p1(1)-p0(1))*(1-cos(s))/2+stepH*(1-cos(s1))/2;
+
+    }
+    else
+    {
+        double s2;
+        s2=PI*(double(count-totalCount/2.0)/(totalCount/2.0));
+        p(1)=p0(1)+(p1(1)-p0(1))*(1-cos(s))/2+stepH-stepH*(1-cos(s2))/2;
+    }
+
 }
 void PlanRbyQuatInterp(const Matrix3d& R0, const Matrix3d& R1, const int count, const int totalCount, Matrix3d& R)
 {

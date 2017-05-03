@@ -20,95 +20,180 @@ static bool isDynCalcFinished{false};
 auto stepOverParse(const std::string &cmd, const std::map<std::string, std::string> &params, aris::core::Msg &msg)->void
 {
     multiStepParam param;
-
-
-    Matrix<double, 3, 6> legPeeSeq[9];
-    Vector3d bodyPeeSeq[9];
-
-    legPeeSeq[0]<<
-            -0.6, -0.8, -0.6, 0.6, 0.8, 0.6,
-            -0.9, -0.9, -0.9, -0.9, -0.9, -0.9,
-            -0.6, 0, 0.6, -0.6, 0, 0.6;
-    legPeeSeq[1]<<
-            -0.8, -0.8, -0.8, 0.6, 0.6, 0.6,
-            -0.9, -0.9, -0.9, -0.9, -0.9, -0.9,
-            -0.6, 0, 0.6, -0.6, 0, 0.6;
-    legPeeSeq[2]<<
-            -0.8, -1.5, -0.8, -0.1, 0.6, -0.1,
-            -0.9, -0.9, -0.9, -0.9, -0.9, -0.9,
-            -0.6, 0, 0.6, -0.6, 0, 0.6;
-    legPeeSeq[3]<<
-            -1.5, -1.5, -1.5, -0.1, -0.1, -0.1,
-            -0.9, -0.9, -0.9, -0.9, -0.9, -0.9,
-            -0.6, 0, 0.6, -0.6, 0, 0.6;
-    legPeeSeq[4]<<
-            -1.5, -2.2, -1.5, -0.8, -0.1, -0.8,
-            -0.9, -0.9, -0.9, -0.9, -0.9, -0.9,
-            -0.6, 0, 0.6, -0.6, 0, 0.6;
-    legPeeSeq[5]<<
-            -2.2, -2.2, -2.2, -0.8, -0.8, -0.8,
-            -0.9, -0.9, -0.9, -0.9, -0.9, -0.9,
-            -0.6, 0, 0.6, -0.6, 0, 0.6;
-    legPeeSeq[6]<<
-            -2.2, -2.9, -2.2, -1.5, -0.8, -1.5,
-            -0.9, -0.9, -0.9, -0.9, -0.9, -0.9,
-            -0.6, 0, 0.6, -0.6, 0, 0.6;
-    legPeeSeq[7]<<
-            -2.9, -2.9, -2.9, -1.5, -1.5, -1.5,
-            -0.9, -0.9, -0.9, -0.9, -0.9, -0.9,
-            -0.6, 0, 0.6, -0.6, 0, 0.6;
-    legPeeSeq[8]<<
-            -2.9, -3.1, -2.9, -1.7, -1.5, -1.7,
-            -0.9, -0.9, -0.9, -0.9, -0.9, -0.9,
-            -0.6, 0, 0.6, -0.6, 0, 0.6;
-
-    bodyPeeSeq[0]=Vector3d(0,0,0);
-    bodyPeeSeq[1]=Vector3d(-0.1,0.12,0);
-    bodyPeeSeq[2]=Vector3d(-0.45,0.12,0);
-    bodyPeeSeq[3]=Vector3d(-0.8,0.12,0);
-    bodyPeeSeq[4]=Vector3d(-1.15,0.12,0);
-    bodyPeeSeq[5]=Vector3d(-1.5,0.12,0);
-    bodyPeeSeq[6]=Vector3d(-1.85,0.12,0);
-    bodyPeeSeq[7]=Vector3d(-2.2,0.12,0);
-    bodyPeeSeq[8]=Vector3d(-2.3,0,0);
-
-
-    for(int N=0;N<STEP_NUMBER;N++)
+    for (auto &i : params)
     {
+        if (i.first == "left")
+        {
 
-        param.stepParam[N].initLegPee = legPeeSeq[N];
-        param.stepParam[N].targetLegPee = legPeeSeq[N+1];
-        param.stepParam[N].initBodyR=Matrix3d::Identity();
-        param.stepParam[N].targetBodyR=Matrix3d::Identity();
-        param.stepParam[N].totalCount = COUNT_PER_STEP;
-        param.stepParam[N].initBodyPee = bodyPeeSeq[N];
-        param.stepParam[N].targetBodyPee = bodyPeeSeq[N+1];
-        std::cout<<param.stepParam[N].initBodyPee<<std::endl;
-        std::cout<<param.stepParam[N].targetBodyPee<<std::endl;
-        if(N%2==0)
-        {
-            memcpy(param.stepParam[N].swingID,legPair1,sizeof(legPair1));
-            memcpy(param.stepParam[N].stanceID,legPair2,sizeof(legPair1));
+           Matrix<double, 3, 6> legPeeSeq[9];
+           Vector3d bodyPeeSeq[9];
+
+           legPeeSeq[0]<<
+                   -0.6, -0.8, -0.6, 0.6, 0.8, 0.6,
+                   -0.9, -0.9, -0.9, -0.9, -0.9, -0.9,
+                   -0.6, 0, 0.6, -0.6, 0, 0.6;
+           legPeeSeq[1]<<
+                   -0.8, -0.8, -0.8, 0.6, 0.6, 0.6,
+                   -0.9, -0.9, -0.9, -0.9, -0.9, -0.9,
+                   -0.6, 0, 0.6, -0.6, 0, 0.6;
+           legPeeSeq[2]<<
+                   -0.8, -1.5, -0.8, -0.1, 0.6, -0.1,
+                   -0.9, -0.9, -0.9, -0.9, -0.9, -0.9,
+                   -0.6, 0, 0.6, -0.6, 0, 0.6;
+           legPeeSeq[3]<<
+                   -1.5, -1.5, -1.5, -0.1, -0.1, -0.1,
+                   -0.9, -0.9, -0.9, -0.9, -0.9, -0.9,
+                   -0.6, 0, 0.6, -0.6, 0, 0.6;
+           legPeeSeq[4]<<
+                   -1.5, -2.2, -1.5, -0.8, -0.1, -0.8,
+                   -0.9, -0.9, -0.9, -0.9, -0.9, -0.9,
+                   -0.6, 0, 0.6, -0.6, 0, 0.6;
+           legPeeSeq[5]<<
+                   -2.2, -2.2, -2.2, -0.8, -0.8, -0.8,
+                   -0.9, -0.9, -0.9, -0.9, -0.9, -0.9,
+                   -0.6, 0, 0.6, -0.6, 0, 0.6;
+           legPeeSeq[6]<<
+                   -2.2, -2.9, -2.2, -1.5, -0.8, -1.5,
+                   -0.9, -0.9, -0.9, -0.9, -0.9, -0.9,
+                   -0.6, 0, 0.6, -0.6, 0, 0.6;
+           legPeeSeq[7]<<
+                   -2.9, -2.9, -2.9, -1.5, -1.5, -1.5,
+                   -0.9, -0.9, -0.9, -0.9, -0.9, -0.9,
+                   -0.6, 0, 0.6, -0.6, 0, 0.6;
+           legPeeSeq[8]<<
+                   -2.9, -3.1, -2.9, -1.7, -1.5, -1.7,
+                   -0.9, -0.9, -0.9, -0.9, -0.9, -0.9,
+                   -0.6, 0, 0.6, -0.6, 0, 0.6;
+
+           bodyPeeSeq[0]=Vector3d(0,0,0);
+           bodyPeeSeq[1]=Vector3d(-0.1,0.13,0);
+           bodyPeeSeq[2]=Vector3d(-0.45,0.13,0);
+           bodyPeeSeq[3]=Vector3d(-0.8,0.13,0);
+           bodyPeeSeq[4]=Vector3d(-1.15,0.13,0);
+           bodyPeeSeq[5]=Vector3d(-1.5,0.13,0);
+           bodyPeeSeq[6]=Vector3d(-1.85,0.13,0);
+           bodyPeeSeq[7]=Vector3d(-2.2,0.13,0);
+           bodyPeeSeq[8]=Vector3d(-2.3,0,0);
+
+
+           for(int N=0;N<STEP_NUMBER;N++)
+           {
+
+               param.stepParam[N].initLegPee = legPeeSeq[N];
+               param.stepParam[N].targetLegPee = legPeeSeq[N+1];
+               param.stepParam[N].initBodyR=Matrix3d::Identity();
+               param.stepParam[N].targetBodyR=Matrix3d::Identity();
+               param.stepParam[N].totalCount = COUNT_PER_STEP;
+               param.stepParam[N].initBodyPee = bodyPeeSeq[N];
+               param.stepParam[N].targetBodyPee = bodyPeeSeq[N+1];
+               std::cout<<param.stepParam[N].initBodyPee<<std::endl;
+               std::cout<<param.stepParam[N].targetBodyPee<<std::endl;
+               if(N%2==0)
+               {
+                   memcpy(param.stepParam[N].swingID,legPair1,sizeof(legPair1));
+                   memcpy(param.stepParam[N].stanceID,legPair2,sizeof(legPair1));
+               }
+               else
+               {
+                   memcpy(param.stepParam[N].swingID,legPair2,sizeof(legPair1));
+                   memcpy(param.stepParam[N].stanceID,legPair1,sizeof(legPair1));
+               }
+               if(N==0||N==7)
+                   param.stepParam[N].stepHeight = 0.08;
+               else
+                   param.stepParam[N].stepHeight = 0.25;
+           }
         }
-        else
+        else if(i.first == "right")
         {
-            memcpy(param.stepParam[N].swingID,legPair2,sizeof(legPair1));
-            memcpy(param.stepParam[N].stanceID,legPair1,sizeof(legPair1));
-        }
-        if(N==0||N==7)
-            param.stepParam[N].stepHeight = 0.08;
-        else
-            param.stepParam[N].stepHeight = 0.25;
+           Matrix<double, 3, 6> legPeeSeq[9];
+           Vector3d bodyPeeSeq[9];
+
+           legPeeSeq[0]<<
+                   -0.6, -0.8, -0.6, 0.6, 0.8, 0.6,
+                   -0.9, -0.9, -0.9, -0.9, -0.9, -0.9,
+                   -0.6, 0, 0.6, -0.6, 0, 0.6;
+           legPeeSeq[1]<<
+                   -0.6, -0.6, -0.6, 0.8, 0.8, 0.8,
+                   -0.9, -0.9, -0.9, -0.9, -0.9, -0.9,
+                   -0.6, 0, 0.6, -0.6, 0, 0.6;
+           legPeeSeq[2]<<
+                    0.1, -0.6, 0.1, 0.8, 1.5, 0.8,
+                   -0.9, -0.9, -0.9, -0.9, -0.9, -0.9,
+                   -0.6, 0, 0.6, -0.6, 0, 0.6;
+           legPeeSeq[3]<<
+                    0.1, 0.1, 0.1, 1.5, 1.5, 1.5,
+                   -0.9, -0.9, -0.9, -0.9, -0.9, -0.9,
+                   -0.6, 0, 0.6, -0.6, 0, 0.6;
+           legPeeSeq[4]<<
+                    0.8, 0.1, 0.8, 1.5, 2.2, 1.5,
+                   -0.9, -0.9, -0.9, -0.9, -0.9, -0.9,
+                   -0.6, 0, 0.6, -0.6, 0, 0.6;
+           legPeeSeq[5]<<
+                    0.8, 0.8, 0.8, 2.2, 2.2, 2.2,
+                   -0.9, -0.9, -0.9, -0.9, -0.9, -0.9,
+                   -0.6, 0, 0.6, -0.6, 0, 0.6;
+           legPeeSeq[6]<<
+                    1.5, 0.8, 1.5, 2.2, 2.9, 2.2,
+                   -0.9, -0.9, -0.9, -0.9, -0.9, -0.9,
+                   -0.6, 0, 0.6, -0.6, 0, 0.6;
+           legPeeSeq[7]<<
+                    1.5, 1.5, 1.5, 2.9, 2.9, 2.9,
+                   -0.9, -0.9, -0.9, -0.9, -0.9, -0.9,
+                   -0.6, 0, 0.6, -0.6, 0, 0.6;
+           legPeeSeq[8]<<
+                    1.7, 1.5, 1.7, 3.1, 2.9, 3.1,
+                   -0.9, -0.9, -0.9, -0.9, -0.9, -0.9,
+                   -0.6, 0, 0.6, -0.6, 0, 0.6;
+
+           bodyPeeSeq[0]=Vector3d(0,0,0);
+           bodyPeeSeq[1]=Vector3d(0.1,0.13,0);
+           bodyPeeSeq[2]=Vector3d(0.45,0.13,0);
+           bodyPeeSeq[3]=Vector3d(0.8,0.13,0);
+           bodyPeeSeq[4]=Vector3d(1.15,0.13,0);
+           bodyPeeSeq[5]=Vector3d(1.5,0.13,0);
+           bodyPeeSeq[6]=Vector3d(1.85,0.13,0);
+           bodyPeeSeq[7]=Vector3d(2.2,0.13,0);
+           bodyPeeSeq[8]=Vector3d(2.3,0,0);
+
+
+           for(int N=0;N<STEP_NUMBER;N++)
+           {
+
+               param.stepParam[N].initLegPee = legPeeSeq[N];
+               param.stepParam[N].targetLegPee = legPeeSeq[N+1];
+               param.stepParam[N].initBodyR=Matrix3d::Identity();
+               param.stepParam[N].targetBodyR=Matrix3d::Identity();
+               param.stepParam[N].totalCount = COUNT_PER_STEP;
+               param.stepParam[N].initBodyPee = bodyPeeSeq[N];
+               param.stepParam[N].targetBodyPee = bodyPeeSeq[N+1];
+               std::cout<<param.stepParam[N].initBodyPee<<std::endl;
+               std::cout<<param.stepParam[N].targetBodyPee<<std::endl;
+               if(N%2==0)
+               {
+                   memcpy(param.stepParam[N].swingID,legPair2,sizeof(legPair1));
+                   memcpy(param.stepParam[N].stanceID,legPair1,sizeof(legPair1));
+               }
+               else
+               {
+                   memcpy(param.stepParam[N].swingID,legPair1,sizeof(legPair1));
+                   memcpy(param.stepParam[N].stanceID,legPair2,sizeof(legPair1));
+               }
+               if(N==0||N==7)
+                   param.stepParam[N].stepHeight = 0.08;
+               else
+                   param.stepParam[N].stepHeight = 0.25;
+           }        }
     }
 
     msg.copyStruct(param);
+
 }
 
 auto stepOverGait(aris::dynamic::Model &model, const aris::dynamic::PlanParamBase &param_in)->int
 {
     auto &robot = static_cast<Robots::RobotBase &>(model);
     auto &param = static_cast<const multiStepParam &>(param_in);
-
 
     static MotionGenerator mg;
     static SensorData data;
@@ -120,7 +205,6 @@ auto stepOverGait(aris::dynamic::Model &model, const aris::dynamic::PlanParamBas
     {
         beginMak.setPrtPm(*robot.body().pm());
         beginMak.update();
-        //        robot.GetPee(beginPee, beginMak);
         //        std:cout<<"beginPee got from model"<<std::endl;
         //        for (int i=0;i<6;i++)
         //            std::cout<<beginPee[i*3]<<" "<<beginPee[i*3+1]<<" "<<beginPee[i*3+2]<<std::endl;
@@ -151,15 +235,14 @@ auto stepOverGait(aris::dynamic::Model &model, const aris::dynamic::PlanParamBas
 
     if(param.count%5000==0)
     {
+//        std::cout<<"bodyPee py"<<bodyPee[0]<<bodyPee[1]<<bodyPee[2]<<bodyPee[3]<<bodyPee[4]<<bodyPee[5]<<std::endl;
+//        std::cout<<"bodyPee"<<bodyPeeM<<std::endl;
+//        std::cout<<"legPee"<<legPeeM<<std::endl;
 
-        std::cout<<"bodyPee"<<bodyPeeM<<std::endl;
-        std::cout<<"legPee"<<legPeeM<<std::endl;
-
-        std::cout<<"Pin ty"<<PinM<<std::endl;
-        for(int i=0;i<6;i++)
-            std::cout<<"Pin py"<<Pin[3*i]<<" "<<Pin[3*i+1]<<" "<<Pin[3*i+2]<<std::endl;
+//        std::cout<<"Pin ty"<<PinM<<std::endl;
+//        for(int i=0;i<6;i++)
+//            std::cout<<"Pin py"<<Pin[3*i]<<" "<<Pin[3*i+1]<<" "<<Pin[3*i+2]<<std::endl;
     }
-
     Matrix3d Ree{Matrix3d::Identity()};
 
     ////********************** begin ty's planning******************************//
@@ -197,12 +280,13 @@ auto stepOverGait(aris::dynamic::Model &model, const aris::dynamic::PlanParamBas
             paramP2P.initLegPee=mg.motionUpdater.lastConfig.LegPee;
             paramP2P.initBodyR=mg.motionUpdater.lastConfig.BodyR;
         }
-
         mg.setStepParams(&paramP2P);
         mg.setStepPlanner(StepPlannerP2P);
         mg.setStepModifier(StepTDStop);
+        std::cout<<"initBody"<<paramP2P.initBodyPee<<std::endl;
+        std::cout<<"targetBody"<<paramP2P.targetBodyPee<<std::endl;
         std::cout<<"initPee"<<paramP2P.initLegPee<<std::endl;
-        std::cout<<"targetPee"<<paramP2P.initLegPee<<std::endl;
+        std::cout<<"targetPee"<<paramP2P.targetLegPee<<std::endl;
 
     }
     ///*** plan***///
@@ -317,15 +401,17 @@ auto pushWalkGait(aris::dynamic::Model &model, const aris::dynamic::PlanParamBas
         totalM+=(legPeeM.col(i)-bodyPeeM).cross(Ree*fsensor);
     }
     finish=clock();
-    if(param.count%500==0)
+    if(param.count%1000==0)
     {
         //        for (int i=0;i<6;i++)
         //            std::cout<<legPee[i*3]<<" "<<legPee[i*3+1]<<" "<<legPee[i*3+2]<<std::endl;
         //        std::cout<<"bodyPee"<<bodyPee[0]<<" "<<bodyPee[1]<<" "<<bodyPee[2]<<std::endl;
-        rt_printf("clock per sec: %d, time spent: %f ms.\n",CLOCKS_PER_SEC,double(finish-start)/CLOCKS_PER_SEC*1000.0);
+        //rt_printf("clock per sec: %d, time spent: %f ms.\n",CLOCKS_PER_SEC,double(finish-start)/CLOCKS_PER_SEC*1000.0);
 
         rt_printf("totalF: %f %f %f\n ",totalF(0),totalF(1),totalF(2));
         rt_printf("totalM: %f %f %f\n ",totalM(0),totalM(1),totalM(2));
+        rt_printf("\n ");
+
     }
     if(isPushWalkFinished==false)
         return 1;

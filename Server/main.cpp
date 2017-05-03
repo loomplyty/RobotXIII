@@ -27,7 +27,6 @@ using namespace std;
 #include "unistd.h"
 #endif
 
-
 int main(int argc, char *argv[])
 {
     std::string xml_address;
@@ -45,9 +44,6 @@ int main(int argc, char *argv[])
     {
         throw std::runtime_error("invalid robot name, please type in III or VIII");
     }
-
-
-
 
 //    clock_t start, finish;
 //    Dynamics::HexRobot robot;
@@ -118,7 +114,7 @@ int main(int argc, char *argv[])
     rs.addCmd("co", crossObstacleParse, crossObstacleGait);
     //ty
     rs.addCmd("ft",ForceTestParse,ForceTestGait);
-    rs.addCmd("fg",stepOverParse,stepOverGait);
+    rs.addCmd("cof",stepOverParse,stepOverGait);
     rs.addCmd("dc",dynCalcParse,dynCalcGait);
     rs.addCmd("pw",pushWalkParse,pushWalkGait);
     rs.open();

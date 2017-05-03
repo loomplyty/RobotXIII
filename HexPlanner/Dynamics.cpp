@@ -31,11 +31,11 @@ namespace Dynamics
 		joints[0].setXTree(node1);
 		joints[1].setXTree(s_trlt2pm(Vector3d(0, 0, 0)));
 		joints[2].setXTree(s_trlt2pm(Vector3d(0, 0, 0)));
-		Matrix4d node2 = leg2BaseTree*s_trlt2pm(Vector3d(0, H, D / 2));
+        Matrix4d node2 = leg2BaseTree*s_trlt2pm(Vector3d(0, H, D / 2.0));
 		joints[3].setXTree(node2);
 		joints[4].setXTree(s_trlt2pm(Vector3d(0, 0, 0)));
 		joints[5].setXTree(s_trlt2pm(Vector3d(0, 0, 0)));
-		Matrix4d node3 = leg2BaseTree*s_trlt2pm(Vector3d(0, H, -D / 2));
+        Matrix4d node3 = leg2BaseTree*s_trlt2pm(Vector3d(0, H, -D / 2.0));
 		joints[6].setXTree(node3);
 		joints[7].setXTree(s_trlt2pm(Vector3d(0, 0, 0)));
 		joints[8].setXTree(s_trlt2pm(Vector3d(0, 0, 0)));
@@ -538,14 +538,14 @@ namespace Dynamics
             0.43322, 0, -0.19907,
             0.48305, 0, 0,
             0.43322, 0, 0.19907;
-        double thetaYHip[6]{ PI*2.0 / 3.0,PI,PI*4.0 / 3.0,PI / 3.0,0,-PI / 3.0 };
-		double thetaZHip[6]{ -PI*7.0 / 18.0,-PI*7.0 / 18.0,-PI*7.0 / 18.0 ,-PI*7.0 / 18.0 ,-PI*7.0 / 18.0,-PI*7.0 / 18.0 };
+        double thetaYHip[6]{ PI*2.0 / 3.0,PI,PI*4.0 / 3.0,PI / 3.0,0,PI*5.0 / 3.0 };
+        double thetaZHip[6]{ -PI*7.0 / 18.0,-PI*7.0 / 18.0,-PI*7.0 / 18.0 ,-PI*7.0 / 18.0 ,-PI*7.0 / 18.0,-PI*7.0 / 18.0 };
 
 		Matrix4d legNodeTree;
 		for (int i = 0; i < 6; i++)
 		{
 			legNodeTree = s_trlt2pm(Vector3d(hipPee2B.row(i)))*s_roty2pm(thetaYHip[i])*s_rotz2pm(thetaZHip[i]);
-			legs[i].setLegID(i);
+            legs[i].setLegID(i);
 			legs[i].LegInit(legNodeTree);
 		}
 		mB = 50;

@@ -564,7 +564,12 @@
                 </sw_param>
             </sw>
             <ft/>
-            <fg/>            
+            <cof default="cof_param">
+                <cof_param type="unique">
+                    <left abbreviation="l"/>
+                    <right abbreviation="r"/>
+                </cof_param>
+            </cof>
             <pw default="pw_param">
                 <pw_param type="unique">
                     <begin abbreviation="b"/>
