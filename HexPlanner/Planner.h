@@ -86,6 +86,7 @@ class MotionStatusUpdater// update every count
 public:
     double SupportThreshold{40};//kg
     double TDThreshold{20};
+
 	Matrix<double, 3, 6> supportLegPos;
 	Matrix<double, 3, 6> TDLegPos;
 	RobotConfiguration plannedConfig;
