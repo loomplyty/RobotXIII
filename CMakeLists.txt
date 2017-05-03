@@ -26,6 +26,8 @@ FUNCTION(PREPEND_H var prefix)
 ENDFUNCTION(PREPEND_H)
 
 project(CMakeDemo_by_PY)
+find_package(PCL 1.8 REQUIRED)
+add_definitions(${PCL_DEFINITIONS})
 
 if(UNIX)
 	set(CMAKE_C_COMPILER "/usr/bin/gcc")
@@ -73,17 +75,25 @@ set(XSENS_LINK_DIR "/usr/Aris_Dependent/xsens/lib")
 set(XNNITE_INCL_DIR "/usr/include/nite")#Driver for kinect
 set(XNNITE_LINK_DIR "/usr/lib")
 set(XNNITE_LINK_LIB )
+set(OPENNI_INCL_DIR "/usr/include/ni")#open NI for kinect
+set(OPENNI_LINK_DIR "/usr/lib")
+set(OPENNI_LINK_LIB OpenNI)
+set(PCL_INCL_DIR ${PCL_INCLUDE_DIRS})#pcl for velodyne
+set(PCL_LINK_DIR ${PCL_LIBRARY_DIRS})
+set(PCL_LINK_LIB ${PCL_LIBRARIES})
 set(ARIS_INCL_DIR "/usr/aris/include")
 set(ARIS_LINK_DIR "/usr/aris/lib")
 set(ARIS_LINK_LIB aris_server aris_sensor aris_dynamic aris_control aris_core)
 set(ROBOTS_INCL_DIR "/usr/Robots/include")
 set(ROBOTS_LINK_DIR "/usr/Robots/lib")
 set(ROBOTS_LINK_LIB Robot_Type_I Robot_Type_II Robot_Base)
+set(VISION_INCL_DIR "./VisionSensor") 
+set(HEX_PLANNER_DIR "./HexPlanner") 
 
 
-set(ALL_INCL_DIR ${ROBOTS_INCL_DIR} ${ARIS_INCL_DIR} ${XNNITE_INCL_DIR} ${XSENS_INCL_DIR} ${ETHERLAB_INCL_DIR} ${XENOMAI_INCL_DIR} ${GENERAL_INCL_DIR} )
-set(ALL_LINK_DIR ${ROBOTS_LINK_DIR} ${ARIS_LINK_DIR} ${XNNITE_LINK_DIR} ${XSENS_LINK_DIR} ${ETHERLAB_LINK_DIR} ${XENOMAI_LINK_DIR})
-set(ALL_LINK_LIB ${ROBOTS_LINK_LIB} ${ARIS_LINK_LIB} ${XNNITE_LINK_LIB} ${XSENS_LINK_LIB} ${ETHERLAB_LINK_LIB} ${XENOMAI_LINK_LIB} ${SYSTEM_LINK_LIB})
+set(ALL_INCL_DIR ${HEX_PLANNER_DIR} ${VISION_INCL_DIR} ${PCL_INCL_DIR}  ${ROBOTS_INCL_DIR} ${ARIS_INCL_DIR} ${XNNITE_INCL_DIR} ${XSENS_INCL_DIR} ${ETHERLAB_INCL_DIR} ${XENOMAI_INCL_DIR} ${GENERAL_INCL_DIR} )
+set(ALL_LINK_DIR ${PCL_LINK_DIR}    ${ROBOTS_LINK_DIR} ${ARIS_LINK_DIR} ${XNNITE_LINK_DIR} ${XSENS_LINK_DIR} ${ETHERLAB_LINK_DIR} ${XENOMAI_LINK_DIR})
+set(ALL_LINK_LIB ${PCL_LINK_LIB}    ${ROBOTS_LINK_LIB} ${ARIS_LINK_LIB} ${XNNITE_LINK_LIB} ${XSENS_LINK_LIB} ${ETHERLAB_LINK_LIB} ${XENOMAI_LINK_LIB} ${SYSTEM_LINK_LIB})
 endif(UNIX)
 if(WIN32)
 set(GENERAL_INCL_DIR "C:/Aris_Dependent")
@@ -107,13 +117,15 @@ include_directories(${ALL_INCL_DIR})
 link_directories(${ALL_LINK_DIR})
 ##include_directories("../HexPlanner")
 ################################### build server ####################################
-set(PLANNER_SOURCE_FILES Planner.cpp Dynamics.cpp DynamicsModelBase.cpp DynamicsBase.cpp)
-set(SOURCE_FILES main.cpp move_body.cpp swing.cpp twist_waist.cpp ForceTest.cpp ForceGait.cpp cross_obstacle.cpp)
+set(SOURCE_FILES main.cpp move_body.cpp swing.cpp twist_waist.cpp ForceTest.cpp ForceGait.cpp cross_obstacle.cpp Calibration.cpp PassStepDitch.cpp)
 PREPEND(FULL_SRC Server ${SOURCE_FILES})
+set(PLANNER_SOURCE_FILES Planner.cpp Dynamics.cpp DynamicsModelBase.cpp DynamicsBase.cpp )
 PREPEND(FULL_SRC2 HexPlanner ${PLANNER_SOURCE_FILES})
-
-add_executable(Server ${FULL_SRC} ${FULL_SRC2})
+set(VISION_SOURCE_FILES Kinect1.cpp VisionSensor.cpp Vision_Gait.cpp Vision_Terrain.cpp)
+PREPEND(VISION_FULL_SRC VisionSensor ${VISION_SOURCE_FILES})
+add_executable(Server ${FULL_SRC} ${FULL_SRC2} ${VISION_FULL_SRC})
 target_link_libraries(Server ${ALL_LINK_LIB})
+
 
 ################################### build client ####################################
 add_executable(rbt Client/client.cpp)

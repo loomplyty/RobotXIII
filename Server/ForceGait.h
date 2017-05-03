@@ -1,7 +1,7 @@
 #ifndef FORCEGAIT_H
 #define FORCEGAIT_H
 
-#include "../HexPlanner/Planner.h"
+#include "Planner.h"
 
 #include <iostream>
 #include <cstring>

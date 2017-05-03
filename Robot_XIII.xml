@@ -597,6 +597,14 @@
                     <height abbreviation="h" type="double" default="0.05"/>
                 </tw_param>
             </tw>
+            <ca/>
+	    <cap/>
+            <sdwk default="VISION_SDWK_PARAM">
+                <VISION_SDWK_PARAM type="group">
+                    <orentation abbreviation="o" type="int" default="1"/>
+                </VISION_SDWK_PARAM>
+            </sdwk>
+            <ssdwk/>
             <co default="co_param">
                 <co_param type="group">
                     <totalCount abbreviation="t" type="int" default="3000"/>

@@ -11,6 +11,13 @@ using namespace std;
 #include <aris.h>
 #include <Robot_Gait.h>
 #include <Robot_Type_I.h>
+
+//ZY
+#include "Kinect1.h"
+#include "pcl/visualization/cloud_viewer.h"
+#include "Calibration.h"
+#include "PassStepDitch.h"
+#include "VisionSensor.h"
 //liujimu's gaits
 #include "move_body.h"
 #include "swing.h"
@@ -19,6 +26,7 @@ using namespace std;
 //TY'S gaits
 #include "ForceGait.h"
 #include "ForceTest.h"
+
 #ifdef WIN32
 #define rt_printf printf
 #endif
@@ -27,8 +35,15 @@ using namespace std;
 #include "unistd.h"
 #endif
 
+
 int main(int argc, char *argv[])
 {
+    Calibration::calibrationWrapper.CalibrationStart();
+    PassStepDitch::adjustWrapper.AdjustStart();
+    kinect1.Start();
+    kinect2.Start();
+    viewStart();
+
     std::string xml_address;
 
     if (argc <= 1)
@@ -118,6 +133,12 @@ int main(int argc, char *argv[])
     rs.addCmd("dc",dynCalcParse,dynCalcGait);
     rs.addCmd("pw",pushWalkParse,pushWalkGait);
     rs.addCmd("aw",AdaptiveWalkParse,AdaptiveWalkGait);
+    //ZY
+    rs.addCmd("sdwk", PassStepDitch::adjustWrapper.PassStepDitchParse, PassStepDitch::adjustWrapper.PassStepDitchGait);
+    rs.addCmd("ssdwk", PassStepDitch::adjustWrapper.StopPassStepDitchParse, PassStepDitch::adjustWrapper.PassStepDitchGait);
+    rs.addCmd("ca", Calibration::calibrationWrapper.visionCalibrateParse, Calibration::calibrationWrapper.visionCalibrate);
+    rs.addCmd("cap", Calibration::calibrationWrapper.captureParse, nullptr);
+
 
     rs.open();
 
