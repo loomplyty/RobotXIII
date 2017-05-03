@@ -99,7 +99,7 @@ void StepPlannerP2P(const StepParams* params_in, MotionStatusUpdater& updater)
         {
             PlanTrajEllipsoid(params.initLegPee.col(i), params.targetLegPee.col(i), params.stepHeight, updater.getCount(), params.totalCount, swingP);
             updater.plannedConfig.LegPee.col(i) = swingP;
-         }
+        }
         for (int i : params.stanceID)
             updater.plannedConfig.LegPee.col(i) = params.initLegPee.col(i);
         PlanTrajEllipsoid(params.initBodyPee, params.targetBodyPee, 0, updater.getCount(), params.totalCount, updater.plannedConfig.BodyPee);
@@ -135,7 +135,7 @@ void StepPlannerCubic(const StepParams* params_in, MotionStatusUpdater& updater)
         PlanTrajCubic(params.initBodyPee, params.targetBodyPee, params.initBodyVee,params.targetBodyVee, updater.getCount(), params.totalCount, updater.plannedConfig.BodyPee);
 
         PlanRbyQuatInterp(params.initBodyR, params.targetBodyR, updater.getCount(), params.totalCount, updater.plannedConfig.BodyR);
-     }
+    }
     else /// prolong leg trajectory, body stops
     {
         double tExtend = double(updater.getCount() - params.totalCount) / COUNT_PER_SEC;
@@ -147,7 +147,6 @@ void StepPlannerCubic(const StepParams* params_in, MotionStatusUpdater& updater)
         updater.plannedConfig.BodyR = params.targetBodyR;
     }
 }
-
 void StepTDStop(const StepParams* params_in, MotionStatusUpdater& updater)
 {
     auto &params = static_cast<const StepParamsP2P &>(*params_in);
@@ -173,8 +172,8 @@ void StepTDStop(const StepParams* params_in, MotionStatusUpdater& updater)
         {
             switch (updater.legState[i])
             {
-         //   std::cout<<"Swing legs :  "<<params.swingID[0]<<" "<<params.swingID[1]<<" "<<params.swingID[2]<<std::endl;
-        //    std::cout<<"foot force "<<i<<": "<<updater.sensorData.forceData(2, i)<<std::endl;
+            //   std::cout<<"Swing legs :  "<<params.swingID[0]<<" "<<params.swingID[1]<<" "<<params.swingID[2]<<std::endl;
+            //    std::cout<<"foot force "<<i<<": "<<updater.sensorData.forceData(2, i)<<std::endl;
             case Swing:
                 if (abs(updater.sensorData.forceData(1, i))> updater.TDThreshold)//Fy
                 {
@@ -194,7 +193,6 @@ void StepTDStop(const StepParams* params_in, MotionStatusUpdater& updater)
                 break;
             }
         }
-
 
         // robot state judging
         if (updater.legState[params.swingID[0]] == Stance && updater.legState[params.swingID[1]] == Stance && updater.legState[params.swingID[2]] == Stance)
@@ -238,6 +236,111 @@ void StepTDStop(const StepParams* params_in, MotionStatusUpdater& updater)
         updater.isStepFinished = false;
 
 }
+void StepAdaptiveModifier(const StepParams* params_in,MotionStatusUpdater& updater)
+{
+    auto &params = static_cast<const StepParamsP2P &>(*params_in);
+
+    //********** init state and ignore force noise during the first half of the swing time****//
+    if (updater.getCount() <= params.totalCount*(1-params.dutyF))
+    {
+        for (int i :params.stanceID)
+            updater.legState[i]=Stance;
+        for (int i : params.swingID)
+            updater.legState[i] = Swing;
+        updater.robotState = ThreeStance;
+    }
+    else if(updater.isForceSensorApplied == true)
+    {
+        for (int i : params.stanceID)
+        {
+            updater.TDLegPos.col(i) = params.initLegPee.col(i);
+            updater.supportLegPos.col(i) = params.initLegPee.col(i);
+        }
+        // state update
+        for (int i : params.swingID)
+        {
+            switch (updater.legState[i])
+            {
+            //   std::cout<<"Swing legs :  "<<params.swingID[0]<<" "<<params.swingID[1]<<" "<<params.swingID[2]<<std::endl;
+            //    std::cout<<"foot force "<<i<<": "<<updater.sensorData.forceData(2, i)<<std::endl;
+            case Swing:
+                if (abs(updater.sensorData.forceData(1, i))> updater.TDThreshold)//Fy
+                {
+                    updater.legState[i] = Trans;
+                    updater.TDLegPos.col(i) = updater.lastConfig.LegPee.col(i);
+                }
+                break;
+            case Trans:
+                if (abs(updater.sensorData.forceData(1, i)) >updater.SupportThreshold)//Fy
+                {
+                    updater.legState[i] = Stance;
+                    updater.supportLegPos.col(i) = updater.lastConfig.LegPee.col(i);
+                }
+                break;
+            case Stance:
+            default:
+                break;
+            }
+        }
+
+        // robot state judging
+        if (updater.legState[params.swingID[0]] == Stance && updater.legState[params.swingID[1]] == Stance && updater.legState[params.swingID[2]] == Stance)
+            updater.robotState = SixStance;
+        else if (updater.legState[params.swingID[0]] == Swing && updater.legState[params.swingID[1]] == Swing && updater.legState[params.swingID[2]] == Swing)
+            updater.robotState = ThreeStance;
+        else
+            updater.robotState = TransStance;
+    }
+
+    // trajectory modification
+    static Matrix<double,3,6> fbLegConfig_2_GB;
+    RobotConfiguration fbConfig_2_GB0;
+
+    fbLegConfig_2_GB=updater.sensorData.bodyR*updater.sensorData.legPee2B;
+
+    fbConfig_2_GB0.BodyPee.setZero();
+    fbConfig_2_GB0.BodyPee+=(params.initLegPee.col(params.swingID[0])-fbLegConfig_2_GB.col(params.swingID[0]))/3;
+    fbConfig_2_GB0.BodyPee+=(params.initLegPee.col(params.swingID[1])-fbLegConfig_2_GB.col(params.swingID[1]))/3;
+    fbConfig_2_GB0.BodyPee+=(params.initLegPee.col(params.swingID[2])-fbLegConfig_2_GB.col(params.swingID[2]))/3;
+
+    for(int i=0;i<6;i++)
+        fbConfig_2_GB0.LegPee.col(i)=fbConfig_2_GB0.BodyPee+fbLegConfig_2_GB.col(i);
+    fbConfig_2_GB0.BodyR=updater.sensorData.bodyR;
+
+    // try to follow the swing leg traj and body traj
+    for (int i : params.swingID)
+    {
+        switch (updater.legState[i])
+        {
+        case Swing:
+            updater.currentConfig.LegPee.col(i) = updater.plannedConfig.LegPee.col(i);
+            break;
+        case Trans:
+            static Vector3d v(0,-0.01,0);
+            updater.currentConfig.LegPee.col(i) = updater.lastConfig.LegPee.col(i)+v*1.0/COUNT_PER_SEC;
+            break;
+        case Stance:
+            updater.currentConfig.LegPee.col(i) = updater.supportLegPos.col(i);
+            break;
+        default:
+            break;
+        }
+    }
+    for(int i:params.stanceID)
+        updater.currentConfig.LegPee.col(i)= updater.plannedConfig.LegPee.col(i);
+
+    updater.currentConfig.BodyPee = updater.plannedConfig.BodyPee;
+    updater.currentConfig.BodyR = updater.plannedConfig.BodyR;
+
+    //judge finish
+    if (updater.getCount() >= params.totalCount-1 && updater.robotState == SixStance)
+        updater.isStepFinished = true;
+    else if (updater.getCount() >= params.totalCount + 3000-1)
+        updater.isStepFinished = true;
+    else
+        updater.isStepFinished = false;
+
+}
 
 void StepTDImpedance(const StepParams* params_in,MotionStatusUpdater& updater)
 {
@@ -264,8 +367,8 @@ void StepTDImpedance(const StepParams* params_in,MotionStatusUpdater& updater)
         {
             switch (updater.legState[i])
             {
-          //  std::cout<<"Swing legs :  "<<params.swingID[0]<<" "<<params.swingID[1]<<" "<<params.swingID[2]<<std::endl;
-        //    std::cout<<"foot force "<<i<<": "<<updater.sensorData.forceData(2, i)<<std::endl;
+            //  std::cout<<"Swing legs :  "<<params.swingID[0]<<" "<<params.swingID[1]<<" "<<params.swingID[2]<<std::endl;
+            //    std::cout<<"foot force "<<i<<": "<<updater.sensorData.forceData(2, i)<<std::endl;
             case Swing:
                 if (abs(updater.sensorData.forceData(1, i))> updater.TDThreshold)//Fy
                 {
@@ -370,11 +473,11 @@ void StepTDTime(const StepParams* params_in, MotionStatusUpdater& updater)
     //judge finish
     if (updater.getCount() >= params.totalCount-1)
     {
-//        std::cout<<"/////////"<<std::endl;
+        //        std::cout<<"/////////"<<std::endl;
 
-//        std::cout<<"updater.getCount() >= params.totalCount"<<std::endl;
-//        std::cout<<"step finished , count is: "<<updater.getCount()<<std::endl;
-//        std::cout<<"/////////"<<std::endl;
+        //        std::cout<<"updater.getCount() >= params.totalCount"<<std::endl;
+        //        std::cout<<"step finished , count is: "<<updater.getCount()<<std::endl;
+        //        std::cout<<"/////////"<<std::endl;
         updater.isStepFinished = true;
 
     }

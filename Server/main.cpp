@@ -117,6 +117,8 @@ int main(int argc, char *argv[])
     rs.addCmd("cof",stepOverParse,stepOverGait);
     rs.addCmd("dc",dynCalcParse,dynCalcGait);
     rs.addCmd("pw",pushWalkParse,pushWalkGait);
+    rs.addCmd("aw",AdaptiveWalkParse,AdaptiveWalkGait);
+
     rs.open();
 
     rs.setOnExit([&]()

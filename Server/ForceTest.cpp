@@ -23,11 +23,12 @@ auto ForceTestGait(aris::dynamic::Model &model, const aris::dynamic::PlanParamBa
     for(int i=0;i<6;i++)
     {
         rt_printf("%f ",param.ruicong_data->at(0).force[i].Fz);
-        //double euler[3];
-        //param.imu_data->toEulBody2Ground(euler,"213");
-        //rt_printf("euler yaw %f,pitch %f,roll %f\n",euler[0],euler[1],euler[2]);
+
 
     }
+    double euler[3];
+    param.imu_data->toEulBody2Ground(euler,"213");
+    rt_printf("euler yaw %f,pitch %f,roll %f\n",euler[0],euler[1],euler[2]);
 
     rt_printf("\n");
     rt_printf("\n");

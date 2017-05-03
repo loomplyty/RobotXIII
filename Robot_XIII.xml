@@ -570,6 +570,12 @@
                     <right abbreviation="r"/>
                 </cof_param>
             </cof>
+            <aw default="aw_param">
+                <aw_param type="unique">
+                    <left abbreviation="l"/>
+                    <right abbreviation="r"/>
+                </aw_param>
+            </aw>
             <pw default="pw_param">
                 <pw_param type="unique">
                     <begin abbreviation="b"/>

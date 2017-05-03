@@ -33,9 +33,10 @@ struct MechanicalImpedance
 };
 struct SensorData
 {
-	//Matrix<double,3,6> legPee2B{Matrix<double,3,6>::Zero()};
+    Matrix<double,3,6> legPee2B{Matrix<double,3,6>::Zero()};
 	Matrix<double, 3, 6> forceData{ Matrix<double,3,6>::Zero() };
 	Vector3d imuData{ Vector3d::Zero() };
+    Matrix3d bodyR{Matrix3d::Identity()};
 };
 
 struct RobotConfiguration
@@ -83,8 +84,8 @@ struct StepParamsNavigation :StepParams
 class MotionStatusUpdater// update every count
 {
 public:
-    double SupportThreshold{40};//kg
-    double TDThreshold{20};
+    double SupportThreshold{60};//kg
+    double TDThreshold{30};
 	Matrix<double, 3, 6> supportLegPos;
 	Matrix<double, 3, 6> TDLegPos;
 	RobotConfiguration plannedConfig;
@@ -182,6 +183,7 @@ void StepPlannerCubic(const StepParams* params, MotionStatusUpdater& updater);//
 void StepTDStop(const StepParams* params, MotionStatusUpdater& planner);
 void StepTDTime(const StepParams* params, MotionStatusUpdater& planner);
 void StepTDImpedance(const StepParams* params_in,MotionStatusUpdater& updater);
+void StepAdaptiveModifier(const StepParams* params_in,MotionStatusUpdater& updater);
 
 void PlanTrajEllipsoidSimple(const Vector3d& p0, const Vector3d& p1, const double stepH, const int count, const int totalCount, Vector3d& p);
 void PlanTrajEllipsoid(const Vector3d& p0, const Vector3d& p1, const double stepH, const int count, const int totalCount, Vector3d& p);
