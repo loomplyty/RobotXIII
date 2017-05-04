@@ -753,24 +753,38 @@ auto pushWalkGait(aris::dynamic::Model &model, const aris::dynamic::PlanParamBas
         legPeeM(2,i)=legPee[i*3+2];
     }
     bodyPeeM=Vector3d(bodyPee[0],bodyPee[1],bodyPee[2]);
+<<<<<<< HEAD
 
+=======
+    //    std:cout<<"legPee got from model"<<std::endl;
+    //    for (int i=0;i<6;i++)
+    //        std::cout<<legPee[i*3]<<" "<<legPee[i*3+1]<<" "<<legPee[i*3+2]<<std::endl;
+>>>>>>> ty/master
 
     robotTY.setPeeB(bodyPeeM,Matrix3d::Identity());
     robotTY.setPeeL(legPeeM,'G');
     Vector3d totalF(0,0,0);
     Vector3d totalM(0,0,0);
+<<<<<<< HEAD
     static Vector3d filteredF(0,0,0);
     static Vector3d filteredM(0,0,0);
 
     for(int i=0;i<6;i++)
     {
         Matrix3d Ree{Matrix3d::Identity()};
+=======
+
+    for(int i=0;i<6;i++)
+    {
+        static Matrix3d Ree{Matrix3d::Identity()};
+>>>>>>> ty/master
         robotTY.legs[i].getREE(Ree);
         Vector3d fsensor(param.ruicong_data->at(0).force[i].Fx,param.ruicong_data->at(0).force[i].Fy,param.ruicong_data->at(0).force[i].Fz);
 
         totalF+=Ree*fsensor;
         totalM+=(legPeeM.col(i)-bodyPeeM).cross(Ree*fsensor);
     }
+<<<<<<< HEAD
     if(Count<50)
         filteredF=(totalF*(50-Count)+filteredF*Count)/50.0;
     else
@@ -883,6 +897,79 @@ auto pushWalkGait(aris::dynamic::Model &model, const aris::dynamic::PlanParamBas
 
         return 0;
     }
+=======
+    static Vector3d norminalF(0,0,0);
+    static Vector3d norminalM(0,0,0);
+    static int ret{0};
+    static bool isWalkBegins{false};
+
+    static double dFx{0};
+    static double dFz{0};
+    static double dMy{0};
+    dFx=totalF(0)-norminalF(0);
+    dFz=totalF(2)-norminalF(2);
+    if(dFz == 0.0)
+        dFz =0.00001;
+    dMy=totalM(1)-norminalM(1);
+
+    if(isWalkBegins == false)
+        if(sqrt(dFx*dFx+dFz*dFz*dMy*dMy) >=20.0)
+        {
+            isWalkBegins=true;
+        }
+
+    if(isWalkBegins== true)
+    {
+        static int gaitCount = 0;
+        static Robots::WalkParam wk_param;
+        if(dFz>=0)
+            wk_param.alpha =atan(dFx/dFz)+PI;
+        else
+            wk_param.alpha =atan(dFx/dFz);
+
+        wk_param.beta =dMy*0.0001;
+        wk_param.d = sqrt(dFx*dFx+dFz*dFz)*0.00001;
+        wk_param.h = 0.05;
+        wk_param.totalCount=3000;
+        wk_param.count=gaitCount;
+        ret=Robots::walkGait(robot, wk_param);
+        if (ret==0)
+        {
+            gaitCount=0;
+            isWalkBegins=false;
+        }
+        else
+            gaitCount++;
+        //        if(gaitCount%200 ==0)
+        //            rt_printf("walking... count %d. ret is %d \n",gaitCount,ret);
+    }
+    else
+    {
+        norminalF=(norminalF*Count+totalF*1)/(Count+1);
+        norminalM=(norminalM*Count+totalM*1)/(Count+1);
+
+        Count+=1;
+        if(param.count%1000==0)
+        {
+            //        for (int i=0;i<6;i++)
+            //            std::cout<<legPee[i*3]<<" "<<legPee[i*3+1]<<" "<<legPee[i*3+2]<<std::endl;
+            //        std::cout<<"bodyPee"<<bodyPee[0]<<" "<<bodyPee[1]<<" "<<bodyPee[2]<<std::endl;
+            //rt_printf("clock per sec: %d, time spent: %f ms.\n",CLOCKS_PER_SEC,double(finish-start)/CLOCKS_PER_SEC*1000.0);
+
+            rt_printf("dFx,dFz,dMy: %f %f %f\n",dFx,dFz,dMy);
+            rt_printf("norminalF: %f %f %f\n ",norminalF(0),norminalF(1),norminalF(2));
+            rt_printf("norminalM: %f %f %f\n ",norminalM(0),norminalM(1),norminalM(2));
+            rt_printf("totalF: %f %f %f\n ",totalF(0),totalF(1),totalF(2));
+            rt_printf("totalM: %f %f %f\n ",totalM(0),totalM(1),totalM(2));
+            rt_printf("\n ");
+        }
+        ret=1;
+    }
+
+
+    if(ret==0||isPushWalkFinished==true)
+        return 0;
+>>>>>>> ty/master
     else
         return 1;
 

@@ -84,7 +84,11 @@ struct StepParamsNavigation :StepParams
 class MotionStatusUpdater// update every count
 {
 public:
+<<<<<<< HEAD
     double SupportThreshold{30};//kg
+=======
+    double SupportThreshold{40};//kg
+>>>>>>> ty/master
     double TDThreshold{10};
 
 	Matrix<double, 3, 6> supportLegPos;

@@ -23,7 +23,10 @@ using namespace std;
 #include "swing.h"
 #include "twist_waist.h"
 #include "cross_obstacle.h"
+<<<<<<< HEAD
 #include "say_hello.h"
+=======
+>>>>>>> ty/master
 //TY'S gaits
 #include "ForceGait.h"
 #include "ForceTest.h"
@@ -39,11 +42,19 @@ using namespace std;
 
 int main(int argc, char *argv[])
 {
+<<<<<<< HEAD
     Calibration::calibrationWrapper.CalibrationStart();
     PassStepDitch::adjustWrapper.AdjustStart();
     kinect1.Start();
     kinect2.Start();
     //viewStart();
+=======
+//    Calibration::calibrationWrapper.CalibrationStart();
+//    PassStepDitch::adjustWrapper.AdjustStart();
+//    kinect1.Start();
+//    kinect2.Start();
+//    viewStart();
+>>>>>>> ty/master
 
     std::string xml_address;
 
@@ -136,7 +147,10 @@ int main(int argc, char *argv[])
     rs.addCmd("mb", moveBodyParse, moveBodyGait);
     rs.addCmd("sw", swingParse, swingGait);
     rs.addCmd("tw", twistWaistParse, twistWaistGait);
+<<<<<<< HEAD
     rs.addCmd("sh", sayHelloParse, sayHelloGait);
+=======
+>>>>>>> ty/master
     rs.addCmd("co", crossObstacleParse, crossObstacleGait);
     //ty
     rs.addCmd("ft",ForceTestParse,ForceTestGait);

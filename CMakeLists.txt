@@ -117,7 +117,11 @@ include_directories(${ALL_INCL_DIR})
 link_directories(${ALL_LINK_DIR})
 ##include_directories("../HexPlanner")
 ################################### build server ####################################
+<<<<<<< HEAD
 set(SOURCE_FILES main.cpp move_body.cpp swing.cpp twist_waist.cpp say_hello.cpp ForceTest.cpp ForceGait.cpp cross_obstacle.cpp Calibration.cpp PassStepDitch.cpp)
+=======
+set(SOURCE_FILES main.cpp move_body.cpp swing.cpp twist_waist.cpp ForceTest.cpp ForceGait.cpp cross_obstacle.cpp Calibration.cpp PassStepDitch.cpp)
+>>>>>>> ty/master
 PREPEND(FULL_SRC Server ${SOURCE_FILES})
 set(PLANNER_SOURCE_FILES Planner.cpp Dynamics.cpp DynamicsModelBase.cpp DynamicsBase.cpp )
 PREPEND(FULL_SRC2 HexPlanner ${PLANNER_SOURCE_FILES})
