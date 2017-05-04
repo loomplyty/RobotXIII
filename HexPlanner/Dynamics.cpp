@@ -220,9 +220,20 @@ namespace Dynamics
 	}
     void Leg::getREE(Matrix3d& _R)
     {
-        _R=joints[2].rm*s_rotz2rm(-20.0/180.0*PI)*s_roty2rm(-PI/2);
+        switch(legId)
+        {
+        case 0:
+        case 1:
+        case 2:
+            _R=joints[2].rm*s_rotz2rm(-20.0/180.0*PI)*s_roty2rm(PI/2)*s_rotz2rm(PI/2);
+            break;
+        case 3:
+        case 4:
+        case 5:
+            _R=joints[2].rm*s_rotz2rm(-20.0/180.0*PI)*s_roty2rm(PI/2)*s_rotz2rm(-PI/2);
+            break;
+        }
     }
-
 	void Leg::getCRand(int _bodyID, Vector3d& _pLocal, Vector3d & _Cp, Vector3d &_Co)
 	{
 		calcC(_bodyID, _pLocal, _Cp, _Co);

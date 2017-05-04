@@ -38,11 +38,11 @@ using namespace std;
 
 int main(int argc, char *argv[])
 {
-    Calibration::calibrationWrapper.CalibrationStart();
-    PassStepDitch::adjustWrapper.AdjustStart();
-    kinect1.Start();
-    kinect2.Start();
-    viewStart();
+//    Calibration::calibrationWrapper.CalibrationStart();
+//    PassStepDitch::adjustWrapper.AdjustStart();
+//    kinect1.Start();
+//    kinect2.Start();
+//    viewStart();
 
     std::string xml_address;
 
@@ -59,6 +59,15 @@ int main(int argc, char *argv[])
     {
         throw std::runtime_error("invalid robot name, please type in III or VIII");
     }
+
+//    double dFx=0;
+//    double dFz=1;
+//    double a=atan(dFx/dFz);
+
+
+//    std::cout<<"a"<<a<<std::endl;
+
+
 
 //    clock_t start, finish;
 //    Dynamics::HexRobot robot;
